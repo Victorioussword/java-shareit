@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping(path = "/users")
 public class UserController {
 
-    private  final  UserService userService;
+    private final UserService userService;
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
@@ -32,9 +32,9 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAll(){
+    public List<User> getAll() {
         List<User> users = userService.getAll();
-        log.info("UserController - getAll(). Возвращен список из {} пользователей" , users.size());
+        log.info("UserController - getAll(). Возвращен список из {} пользователей", users.size());
         return users;
     }
 

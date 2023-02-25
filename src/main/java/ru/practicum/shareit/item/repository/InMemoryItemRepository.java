@@ -61,10 +61,7 @@ public class InMemoryItemRepository implements ItemRepository {
     public List<Item> search(String text) {
         List<Item> itemsForReturn = new ArrayList<>();
         for (Map.Entry<Long, Item> pair : items.entrySet()) {
-            if (!text.isEmpty()
-              &&(pair.getValue().getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
-                    || pair.getValue().getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)))
-              && pair.getValue().getAvailable()) {
+            if (!text.isEmpty() && (pair.getValue().getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) || pair.getValue().getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))) && pair.getValue().getAvailable()) {
                 itemsForReturn.add(pair.getValue());
             }
         }

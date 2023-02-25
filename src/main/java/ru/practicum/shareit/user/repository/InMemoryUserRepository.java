@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class InMemoryUserRepository implements  UserRepository{
+public class InMemoryUserRepository implements UserRepository {
     private long id = 1;
     private Map<Long, User> users = new HashMap<>();
     private Set<String> usersByEmail = new HashSet<>();
@@ -56,7 +56,7 @@ public class InMemoryUserRepository implements  UserRepository{
     }
 
     public List<User> getAll() {
-        List <User> usersRForReturn= users.values().stream().collect(Collectors.toList());
+        List<User> usersRForReturn = users.values().stream().collect(Collectors.toList());
         return usersRForReturn;
     }
 }

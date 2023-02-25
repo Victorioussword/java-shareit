@@ -29,10 +29,10 @@ public class ItemService {
         if (!item.getAvailable()) {
             throw new AvailableCheckException("Укажите доступность Item");
         }
-        if(item.getName().isEmpty()){
+        if (item.getName().isEmpty()) {
             throw new AvailableCheckException("Укажите Name");
         }
-        if(item.getDescription().isEmpty()){
+        if (item.getDescription().isEmpty()) {
             throw new AvailableCheckException("Укажите Description");
         }
         log.info("ItemService - метод createItem (). Добавлен Item {}.", item.toString());
@@ -92,7 +92,7 @@ public class ItemService {
         }
     }
 
-    public List<Item> getByOwnerId(long ownerId){
+    public List<Item> getByOwnerId(long ownerId) {
         List<Item> items = itemRepository.getByOwnerId(ownerId);
         log.info("ItemController - getByOwnerId(). Возвращен список из {} предметов", items.size());
         return items;
@@ -101,6 +101,6 @@ public class ItemService {
     public List<Item> search(String text) {
         List<Item> items = itemRepository.search(text);
         log.info("ItemController - search(). Возвращен список из {} предметов", items.size());
-       return items;
+        return items;
     }
 }

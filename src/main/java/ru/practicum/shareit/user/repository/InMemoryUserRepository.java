@@ -3,6 +3,8 @@ package ru.practicum.shareit.user.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
@@ -17,16 +19,16 @@ public class InMemoryUserRepository implements UserRepository {
     private Set<String> usersByEmail = new HashSet<>();
 
 
-    public User createUser(User user) {
-        user.setId(id);
+    public UserDto createUser(UserDto userDto) {
+        userDto.setId(id);
         id++;
-        users.put(user.getId(), user);
-        usersByEmail.add(user.getEmail());
-        log.info("InMemoryUserRepository - createUser(). ДОбавлен {}", user.toString());
-        return user;
+        users.put(userDto.getId(), UserMapper.toUser(userDto));
+        usersByEmail.add(userDto.getEmail());
+        log.info("InMemoryUserRepository - createUser(). ДОбавлен {}", userDto.toString());
+        return userDto;
     }
 
-    public User getById(long id) {
+     public User getById(long id) {
         User userForReturn = users.get(id);
         log.info("InMemoryUserRepository - getById(). Возвращен {}", userForReturn.toString());
         return userForReturn;

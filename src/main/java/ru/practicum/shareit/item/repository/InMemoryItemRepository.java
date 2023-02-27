@@ -6,6 +6,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -57,14 +58,13 @@ public class InMemoryItemRepository implements ItemRepository {
         return itemsForReturn;
     }
 
-
     public List<Item> search(String text) {
-        List<Item> itemsForReturn = new ArrayList<>();
-        for (Map.Entry<Long, Item> pair : items.entrySet()) {
-            if (!text.isEmpty() && (pair.getValue().getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) || pair.getValue().getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))) && pair.getValue().getAvailable()) {
-                itemsForReturn.add(pair.getValue());
-            }
-        }
-        return itemsForReturn;
+        return text.isBlank() ?
+                Collections.emptyList() :
+                items.values().stream()
+                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
+                        item.getDescription().toLowerCase().contains(text.toLowerCase()))
+                .filter(Item::getAvailable)
+                .collect(Collectors.toList());
     }
 }

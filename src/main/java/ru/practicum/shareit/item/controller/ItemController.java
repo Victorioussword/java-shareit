@@ -8,7 +8,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.Create;
 
-import javax.validation.constraints.NotBlank;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -48,9 +48,13 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> search(@NotBlank @RequestParam String text) {
-        List<ItemDto> items = itemService.search(text);
-        log.info("ItemController - getByOwnerId(). Возвращен список из {} предметов", items.size());
-        return items;
+    public List<ItemDto> search(@RequestParam String text) {
+        if (text.isBlank()) {
+            return Collections.emptyList();
+        } else {
+            List<ItemDto> items = itemService.search(text);
+            log.info("ItemController - getByOwnerId(). Возвращен список из {} предметов", items.size());
+            return items;
+        }
     }
 }

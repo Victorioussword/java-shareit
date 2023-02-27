@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -49,21 +51,13 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     public List<Item> getByOwnerId(long id) {
-        List<Item> itemsForReturn = new ArrayList<>();
-        for (Map.Entry<Long, Item> pair : items.entrySet()) {
-            if (pair.getValue().getOwnerId() == id) {
-                itemsForReturn.add(pair.getValue());
-            }
-        }
-        return itemsForReturn;
+        return items.values().stream().filter(i -> i.getOwnerId() == id).collect(Collectors.toList());
     }
 
     public List<Item> search(String text) {
-        return text.isBlank() ?
-                Collections.emptyList() :
-                items.values().stream()
-                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()) ||
-                        item.getDescription().toLowerCase().contains(text.toLowerCase()))
+        return items.values().stream()
+                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .filter(Item::getAvailable)
                 .collect(Collectors.toList());
     }

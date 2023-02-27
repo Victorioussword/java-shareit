@@ -28,7 +28,7 @@ public class InMemoryUserRepository implements UserRepository {
         return userDto;
     }
 
-     public User getById(long id) {
+    public User getById(long id) {
         User userForReturn = users.get(id);
         log.info("InMemoryUserRepository - getById(). Возвращен {}", userForReturn.toString());
         return userForReturn;
@@ -37,7 +37,7 @@ public class InMemoryUserRepository implements UserRepository {
     public User update(User user, String oldEmail) {
         usersByEmail.remove(oldEmail);   // удалили по старому Email
         usersByEmail.add(user.getEmail());   // положили по новому Email
-        users.put(user.getId(), user);  // положили по ID
+      //  users.put(user.getId(), user);  // положили по ID
         log.info("InMemoryUserRepository - update(). Обновлен {}", user.toString());
         return user;
     }

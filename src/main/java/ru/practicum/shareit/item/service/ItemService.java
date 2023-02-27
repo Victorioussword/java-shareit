@@ -11,8 +11,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,8 +23,8 @@ public class ItemService {
 
     public ItemDto createItem(ItemDto itemDto, long userId) {
         checkExistUser(userId);
-        itemDto.setOwnerId(userId);
         Item item = ItemMapper.toItem(itemDto);
+        item.setOwnerId(userId);
         ItemDto itemDtoForReturn = ItemMapper.toItemDto(itemRepository.createItem(item));
         log.info("ItemService - метод createItem (). Добавлен Item {}.", itemDtoForReturn.toString());
         return itemDtoForReturn;
@@ -43,7 +43,7 @@ public class ItemService {
         checkExistUser(userIdInHeader);
         checkExistItem(itemId);
         prepareItemForUpdate(item, itemDto);
-        ItemDto itemDtoForReturn = ItemMapper.toItemDto(itemRepository.update(item));
+        ItemDto itemDtoForReturn = ItemMapper.toItemDto(item);
         log.info("ItemService - update(). Обновлен {}", item.toString());
         return itemDtoForReturn;
     }
@@ -84,19 +84,13 @@ public class ItemService {
     public List<ItemDto> getByOwnerId(long ownerId) {
         List<Item> items = itemRepository.getByOwnerId(ownerId);
         log.info("ItemController - getByOwnerId(). Возвращен список из {} предметов", items.size());
-        List<ItemDto> itemsDto = new ArrayList<>();
-        for (int i = 0; i < items.size(); i++) {
-            itemsDto.add(ItemMapper.toItemDto(items.get(i)));
-        }
+        List<ItemDto> itemsDto = items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
         return itemsDto;
     }
 
     public List<ItemDto> search(String text) {
         List<Item> items = itemRepository.search(text);
-        List<ItemDto> itemsDto = new ArrayList<>();
-        for (int i = 0; i < items.size(); i++) {
-            itemsDto.add(ItemMapper.toItemDto(items.get(i)));
-        }
+        List<ItemDto> itemsDto = items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
         log.info("ItemController - search(). Возвращен список из {} предметов", items.size());
         return itemsDto;
     }

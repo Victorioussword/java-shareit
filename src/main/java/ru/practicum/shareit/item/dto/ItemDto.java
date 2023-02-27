@@ -22,7 +22,7 @@ public class ItemDto {
     private String description;
     @NotNull (groups = Create.class)
     private Boolean available;
-    private Long ownerId;
+  //  private Long ownerId;
 
 }
 

@@ -10,8 +10,8 @@ import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -23,9 +23,7 @@ public class UserService {
 
 
     public UserDto getById(Long id) {
-        if (id == null || id == 0) {
-            throw new NotFoundException("Не указан Id пользователя для получения");
-        }
+        checkExistUser(id);
         UserDto userDtoForReturn = UserMapper.toUserDto(userRepository.getById(id));
         log.info("UserService - getById(). Возвращен {}", userDtoForReturn.toString());
         return userDtoForReturn;
@@ -59,10 +57,7 @@ public class UserService {
 
     public List<UserDto> getAll() {
         List<User> users = userRepository.getAll();
-        List<UserDto> userDtos = new ArrayList<>();
-        for (int i = 0; i < users.size(); i++) {
-            userDtos.add(UserMapper.toUserDto(users.get(i)));
-        }
+        List<UserDto> userDtos = users.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
         log.info("UserController - getAll(). Возвращен список из {} пользователей", userDtos.size());
         return userDtos;
     }
@@ -79,7 +74,7 @@ public class UserService {
         }
     }
 
-    private User prepareUserForUpdate(User user, UserDto userDto) {
+    private void prepareUserForUpdate(User user, UserDto userDto) {
         if (userDto.getName() != null && !userDto.getName().isBlank()) {
             user.setName(userDto.getName());
         }
@@ -87,7 +82,13 @@ public class UserService {
             user.setEmail(userDto.getEmail());
         }
         log.info("UserService - Было {} , Стало {}", user.toString(), userDto.toString());
-        return new User(user.getId(), user.getName(), user.getEmail());
+        return;
+    }
+
+    private void checkExistUser(long id) {
+        if (!userRepository.getUsers().containsKey(id)) {
+            throw new NotFoundException("Пoльзователь не существует");
+        }
     }
 
 }

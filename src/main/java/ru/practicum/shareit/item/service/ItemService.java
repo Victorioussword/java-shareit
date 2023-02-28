@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -56,7 +55,7 @@ public class ItemService {
             item.setDescription(itemDto.getDescription());
         }
         if (itemDto.getAvailable() != null) {
-            item.setAvailable(itemDto.getAvailable());  // проблема с доступностью
+            item.setAvailable(itemDto.getAvailable());
         }
         log.info("ItemService - Было {} , Стало {}", item.toString(), itemDto.toString());
         return item;
@@ -72,12 +71,6 @@ public class ItemService {
     private void checkExistUser(long id) {
         if (!userRepository.getUsers().containsKey(id)) {
             throw new NotFoundException("Пoльзователь не существует");
-        }
-    }
-
-    private void checkExistItem(long id) {
-        if (!itemRepository.getItems().containsKey(id)) {
-            throw new NotFoundException("Инструмент не существует");
         }
     }
 

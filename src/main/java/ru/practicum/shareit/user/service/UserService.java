@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -38,7 +37,7 @@ public class UserService {
     }
 
     public UserDto update(UserDto userDto, long id) {
-        User user = userRepository.getById(id);  // получили юзера для обновления
+        User user = userRepository.getById(id);
         String oldEmail = user.getEmail();
         userDto.setId(id);
 
@@ -84,11 +83,4 @@ public class UserService {
         log.info("UserService - Было {} , Стало {}", user.toString(), userDto.toString());
         return;
     }
-
-    private void checkExistUser(long id) {
-        if (!userRepository.getUsers().containsKey(id)) {
-            throw new NotFoundException("Пoльзователь не существует");
-        }
-    }
-
 }

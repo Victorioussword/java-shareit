@@ -31,7 +31,7 @@ public class InMemoryItemRepository implements ItemRepository {
     public Item getById(long id) {
         if (items.containsKey(id)) {
             Item itemForReturn = items.get(id);
-            log.info("InMemoryItemRepository - метод createItem(). Возвращен {} ", itemForReturn.toString());
+            log.info("InMemoryItemRepository - метод getById(). Возвращен {} ", itemForReturn.toString());
             return itemForReturn;
         } else {
             log.info("InMemoryItemRepository - метод getById(). Item {} не найден.", id);

@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -29,15 +30,19 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     public User getById(long id) {
-        User userForReturn = users.get(id);
-        log.info("InMemoryUserRepository - getById(). Возвращен {}", userForReturn.toString());
-        return userForReturn;
+        if (users.containsKey(id)) {
+            User userForReturn = users.get(id);
+            log.info("InMemoryUserRepository - метод getById(). Возвращен {} ", userForReturn.toString());
+            return userForReturn;
+        } else {
+            log.info("InMemoryUserRepository - метод getById(). User {} не найден.", id);
+            throw new NotFoundException("User не найден");
+        }
     }
 
     public User update(User user, String oldEmail) {
-        usersByEmail.remove(oldEmail);   // удалили по старому Email
-        usersByEmail.add(user.getEmail());   // положили по новому Email
-      //  users.put(user.getId(), user);  // положили по ID
+        usersByEmail.remove(oldEmail);
+        usersByEmail.add(user.getEmail());
         log.info("InMemoryUserRepository - update(). Обновлен {}", user.toString());
         return user;
     }

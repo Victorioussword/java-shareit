@@ -30,18 +30,18 @@ public class ItemService {
         return itemDtoForReturn;
     }
 
+
     public ItemDto getById(long id) {
-        checkExistItem(id);
         ItemDto itemDtoForReturn = ItemMapper.toItemDto(itemRepository.getById(id));
         log.info("ItemService - getById(). Добавлен Item {}.", itemDtoForReturn.toString());
         return itemDtoForReturn;
     }
 
+
     public ItemDto update(ItemDto itemDto, long itemId, Long userIdInHeader) {
         Item item = itemRepository.getById(itemId);
         checkEqualsUsersIds(item.getOwnerId(), userIdInHeader);
         checkExistUser(userIdInHeader);
-        checkExistItem(itemId);
         prepareItemForUpdate(item, itemDto);
         ItemDto itemDtoForReturn = ItemMapper.toItemDto(item);
         log.info("ItemService - update(). Обновлен {}", item.toString());

@@ -23,7 +23,7 @@ public class UserService {
 
 
     public UserDto getById(Long id) {
-        checkExistUser(id);
+
         UserDto userDtoForReturn = UserMapper.toUserDto(userRepository.getById(id));
         log.info("UserService - getById(). Возвращен {}", userDtoForReturn.toString());
         return userDtoForReturn;
@@ -41,7 +41,7 @@ public class UserService {
         User user = userRepository.getById(id);  // получили юзера для обновления
         String oldEmail = user.getEmail();
         userDto.setId(id);
-        checkUnicId(id);  // проверили id - есть
+
         catchUnunicEmail(userDto, user);
         prepareUserForUpdate(user, userDto);
         UserDto userDtoForReturn = UserMapper.toUserDto(userRepository.update(user, oldEmail));

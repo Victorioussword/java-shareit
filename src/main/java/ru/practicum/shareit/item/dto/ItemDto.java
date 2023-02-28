@@ -20,9 +20,7 @@ public class ItemDto {
     private String name;
     @NotBlank(groups = Create.class)
     private String description;
-    @NotNull (groups = Create.class)
+    @NotNull(groups = Create.class)
     private Boolean available;
-  //  private Long ownerId;
-
 }
 

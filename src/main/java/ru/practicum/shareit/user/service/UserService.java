@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -10,6 +11,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -22,56 +24,64 @@ public class UserService {
 
 
     public UserDto getById(Long id) {
-
-        UserDto userDtoForReturn = UserMapper.toUserDto(userRepository.getById(id));
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            throw new NotFoundException("User не обнружен");
+        }
+        UserDto userDtoForReturn = UserMapper.toUserDto(user.get());
         log.info("UserService - getById(). Возвращен {}", userDtoForReturn.toString());
         return userDtoForReturn;
     }
 
+
     public UserDto createUser(UserDto userDto) {
-        if (userRepository.getUsersByEmail().contains(userDto.getEmail())) {
-            throw new ValidationException("Создание - Почта занята - EMAIL");
-        }
-        log.info("UserService - createUser(). ДОбавлен {}", userDto.toString());
-        return userRepository.createUser(userDto);
+        UserDto user = UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
+        log.info("UserService - createUser(). ДОбавлен {}", user.toString());
+        return user;
     }
 
-    public UserDto update(UserDto userDto, long id) {
-        User user = userRepository.getById(id);
-        String oldEmail = user.getEmail();
-        userDto.setId(id);
 
-        catchUnunicEmail(userDto, user);
+    public UserDto update(UserDto userDto, long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            log.warn("UserService - update().User {} для обновления не существует", id);
+            throw new NotFoundException("UserService - update().User для обновления не существует");
+        });
+        userDto.setId(id);
         prepareUserForUpdate(user, userDto);
-        UserDto userDtoForReturn = UserMapper.toUserDto(userRepository.update(user, oldEmail));
+        UserDto userDtoForReturn = UserMapper.toUserDto(userRepository.save(user));
         log.info("UserService - update(). Обновлен {}", userDtoForReturn.toString());
         return userDtoForReturn;
     }
 
+
     public void delById(long id) {
         checkUnicId(id);
         log.info("UserService - delById(). Удален пользователь с id {}", id);
-        userRepository.delById(id);
+        userRepository.deleteById(id);
     }
 
+
     public List<UserDto> getAll() {
-        List<User> users = userRepository.getAll();
+        List<User> users = userRepository.findAll();
         List<UserDto> userDtos = users.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
         log.info("UserController - getAll(). Возвращен список из {} пользователей", userDtos.size());
         return userDtos;
     }
 
+
+    public Optional<User> findByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        log.info("UserController - findByEmail(). Возвращен  {}", user);
+        return user;
+    }
+
+
     private void checkUnicId(long id) {
-        if (!userRepository.getUsers().containsKey(id)) {
+        if (userRepository.findById(id).isEmpty()) {
             throw new ValidationException("Пользователь с таким id не существует");
         }
     }
 
-    private void catchUnunicEmail(UserDto newUserDto, User oldUser) {
-        if (newUserDto.getEmail() != null && !oldUser.getEmail().equals(newUserDto.getEmail()) && userRepository.getUsersByEmail().contains(newUserDto.getEmail())) {
-            throw new ValidationException("Укажите корректную почту - EMAIL");
-        }
-    }
 
     private void prepareUserForUpdate(User user, UserDto userDto) {
         if (userDto.getName() != null && !userDto.getName().isBlank()) {
@@ -81,6 +91,5 @@ public class UserService {
             user.setEmail(userDto.getEmail());
         }
         log.info("UserService - Было {} , Стало {}", user.toString(), userDto.toString());
-        return;
     }
 }

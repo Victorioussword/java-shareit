@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -17,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
-@Component
+
 public class BookingController {
     private final BookingService bookingService;
 
@@ -46,7 +45,7 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDtoForReturn> getByBookerId(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                   @RequestParam(defaultValue = "ALL", required = false) String state) {
+                                                   @RequestParam(defaultValue = "ALL") String state) {
         List<BookingDtoForReturn> bookingDtos = bookingService.getByBookerId(userId, state);
         log.info("BookingController - getByUserId(). Возвращен список из  {} бронирований", bookingDtos.size());
         return bookingDtos;
@@ -54,7 +53,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDtoForReturn> getByOwnerId(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                  @RequestParam(defaultValue = "ALL", required = false) String state) {
+                                                  @RequestParam(defaultValue = "ALL") String state) {
         List<BookingDtoForReturn> bookingDtos = bookingService.getByOwnerId(userId, state);
         log.info("BookingController - getByUserId(). Возвращен список из  {} бронирований", bookingDtos.size());
         return bookingDtos;

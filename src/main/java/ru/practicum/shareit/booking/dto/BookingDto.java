@@ -1,10 +1,10 @@
 package ru.practicum.shareit.booking.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.Create;
-import ru.practicum.shareit.user.dto.Update;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BookingDto {
 
-    @NotNull(groups = Update.class)
     private long id;
 
     @FutureOrPresent(groups = Create.class)
@@ -27,9 +26,8 @@ public class BookingDto {
     @NotNull(groups = Create.class)
     private LocalDateTime end;
 
-    @NotNull(groups = Create.class)
     private long itemId;
-
+    @JsonIgnore
     private long booker;
-    String status;
+
 }

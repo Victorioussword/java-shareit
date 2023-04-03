@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class BookingShortDto {
-    long id;
-    long bookerId;
+    private long id;
+    private long bookerId;
 }

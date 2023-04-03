@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.CommentDto;
+import ru.practicum.shareit.comment.CommentDtoForReturn;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.service.ItemService;
@@ -61,9 +62,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long userId,
-                                    @PathVariable long itemId,
-                                    @Validated({Create.class}) @RequestBody CommentDto comment) {
+    public CommentDtoForReturn createComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                             @PathVariable long itemId,
+                                             @Validated({Create.class}) @RequestBody CommentDto comment) {
         return itemService.createComment(comment, userId, itemId);
     }
 }

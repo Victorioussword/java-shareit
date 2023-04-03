@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.CommentDto;
+import ru.practicum.shareit.comment.CommentDtoForReturn;
 import ru.practicum.shareit.comment.CommentMapper;
 import ru.practicum.shareit.comment.CommentRepository;
 import ru.practicum.shareit.exception.AvailableCheckException;
@@ -80,7 +81,7 @@ public class ItemService {
         return itemsDto;
     }
 
-    public CommentDto createComment(CommentDto commentDto, Long userId, Long itemId) {
+    public CommentDtoForReturn createComment(CommentDto commentDto, Long userId, Long itemId) {
         commentDto.setCreated(LocalDateTime.now());
         User user = userRepository.findById(userId).orElseThrow(() -> {
             throw new NotFoundException("Пользователь не найден");
@@ -94,7 +95,7 @@ public class ItemService {
                     " Добавить комментарий не возможно");
         }
         log.info("ItemController -  createComment(). Добавлен комментарий {}", commentDto);
-        return CommentMapper.toCommentDto(commentRepository.save(CommentMapper.toComment(commentDto, user, item)));
+        return CommentMapper.toCommentDtoForReturn(commentRepository.save(CommentMapper.toComment(commentDto, user, item)));
     }
 
 
@@ -120,7 +121,7 @@ public class ItemService {
     private ItemWithBookingAndCommentsDto addComments(Item item) {
         ItemWithBookingAndCommentsDto itemWithBookingAndCommentsDto = ItemMapper.toItemWithBookingAndCommentsDto(item);
         itemWithBookingAndCommentsDto.setComments(commentRepository.findAllByItemId(item.getId())
-                .stream().map(CommentMapper::toCommentDto)
+                .stream().map(CommentMapper::toCommentDtoForReturn)
                 .collect(Collectors.toList()));
         return itemWithBookingAndCommentsDto;
     }
@@ -146,7 +147,7 @@ public class ItemService {
 
         // добавляем комментарии
         itemWithBookingAndCommentsDto.setComments(commentRepository.findAllByItemId(item.getId())
-                .stream().map(CommentMapper::toCommentDto)
+                .stream().map(CommentMapper::toCommentDtoForReturn)
                 .collect(Collectors.toList()));
         return itemWithBookingAndCommentsDto;
     }

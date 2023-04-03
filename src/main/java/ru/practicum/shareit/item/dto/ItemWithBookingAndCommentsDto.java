@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
-import ru.practicum.shareit.comment.CommentDto;
+import ru.practicum.shareit.comment.CommentDtoForReturn;
 
 import java.util.List;
 
@@ -18,5 +18,5 @@ public class ItemWithBookingAndCommentsDto {
         private Boolean available;
         private BookingShortDto lastBooking;
         private BookingShortDto nextBooking;
-        private List<CommentDto> comments;
+        private List<CommentDtoForReturn> comments;
     }

@@ -49,7 +49,7 @@ public class ItemService {
     public ItemDto update(ItemDto itemDto, long itemId, Long userIdInHeader) {
         Item item = itemRepository.getById(itemId);  // получаем из базы
         checkEqualsUsersIds(item.getOwner(), userIdInHeader);
-//      checkExistUser(userIdInHeader);
+
         prepareItemForUpdate(item, itemDto);
         log.info("ItemService - update(). Обновлен {}", item.toString());
         itemRepository.save(item);

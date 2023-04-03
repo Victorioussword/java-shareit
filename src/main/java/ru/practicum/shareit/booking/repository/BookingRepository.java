@@ -1,5 +1,5 @@
 package ru.practicum.shareit.booking.repository;
-
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
@@ -38,12 +38,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "order by booking.start desc")
     List<Booking> findAllByBookerOrderByStartDescCurrent(long userId, LocalDateTime now);
 
-
+// Добавил Sort
     @Query("select booking from Booking booking " +
             "where booking.start >= ?2 " +
-            "and booking.booker.id = ?1 " +
-            "order by booking.start desc")
-    List<Booking> findAllByBookerOrderByStartDescFuture(long userId, LocalDateTime now);
+            "and booking.booker.id = ?1 ")
+    List<Booking> findAllByBookerOrderByStartDescFuture(long userId, LocalDateTime now, Sort sort);
 
 
     @Query("select booking from Booking booking " +
@@ -109,3 +108,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "order by booking.start desc ")
     List<Booking> getLastBookings(long id, LocalDateTime now);
 }
+
+//    @Query("select booking from Booking booking " +
+//            "where booking.start >= ?2 " +
+//            "and booking.booker.id = ?1 " +
+//           "order by booking.start desc")
+//    List<Booking> findAllByBookerOrderByStartDescFuture(long userId, LocalDateTime now, Sort sort);

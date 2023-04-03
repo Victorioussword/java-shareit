@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
@@ -30,12 +31,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Component
+@Transactional(readOnly = true)
 public class ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
 
+    @Transactional
     public ItemDto createItem(ItemDto itemDto, long userId) {
         User owner = userRepository.findById(userId).orElseThrow(() -> {
             throw new NotFoundException("Владелец вещи не найден");
@@ -47,6 +50,7 @@ public class ItemService {
         return itemDtoForReturn;
     }
 
+    @Transactional
     public ItemDto update(ItemDto itemDto, long itemId, Long userIdInHeader) {
         Item item = itemRepository.getById(itemId);  // получаем из базы
         checkEqualsUsersIds(item.getOwner(), userIdInHeader);
@@ -81,6 +85,7 @@ public class ItemService {
         return itemsDto;
     }
 
+    @Transactional
     public CommentDtoForReturn createComment(CommentDto commentDto, Long userId, Long itemId) {
         commentDto.setCreated(LocalDateTime.now());
         User user = userRepository.findById(userId).orElseThrow(() -> {

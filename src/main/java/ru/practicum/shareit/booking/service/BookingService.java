@@ -3,7 +3,9 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -27,11 +29,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Component
+@Transactional(readOnly = true)
 public class BookingService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    Sort sort = Sort.by(Sort.Direction.DESC, "start");
 
+    @Transactional
     public BookingDtoForReturn postBooking(BookingDto bookingDto) {
         Optional<User> booker = userRepository.findById(bookingDto.getBooker());
         if (booker.isEmpty()) {
@@ -61,6 +66,7 @@ public class BookingService {
         }
     }
 
+    @Transactional
     public BookingDtoForReturn approving(long bookingId, long userId, Boolean status) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> {
             throw new NotFoundException("Booking не найден");
@@ -83,7 +89,7 @@ public class BookingService {
         } else booking.setStatus(Status.REJECTED.toString());
         log.info("BookingService - approving().  Подтверждено  {}", booking.toString());
         checkTimeUpdate(booking);
-        return BookingMapper.toBookingDtoForReturn(bookingRepository.save(booking));
+        return BookingMapper.toBookingDtoForReturn(booking);  // Вызов метода save() больше не требуется. return BookingMapper.toBookingDtoForReturn(bookingRepository.save(booking));
     }
 
 
@@ -132,7 +138,7 @@ public class BookingService {
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case "FUTURE":
-                return bookingRepository.findAllByBookerOrderByStartDescFuture(userId, LocalDateTime.now()).
+                return bookingRepository.findAllByBookerOrderByStartDescFuture(userId, LocalDateTime.now(), sort).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case "WAITING":

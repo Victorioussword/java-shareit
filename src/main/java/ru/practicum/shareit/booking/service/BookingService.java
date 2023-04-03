@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.AvailableCheckException;
@@ -55,7 +56,7 @@ public class BookingService {
 
         checkTimeCreate(BookingMapper.toBooking(bookingDto, booker.get(), item.get()));
         Booking booking = bookingRepository.save(BookingMapper.toBooking(bookingDto, booker.get(), item.get()));
-        booking.setStatus(Status.WAITING.toString());
+        booking.setStatus(Status.WAITING);  // TODO 6
         log.info("BookingService - postBooking().  ДОбавлено  {}", booking.toString());
         return BookingMapper.toBookingDtoForReturn(bookingRepository.save(booking));
     }
@@ -81,12 +82,12 @@ public class BookingService {
         if (item.getOwner() != userId) {
             throw new NotFoundException("Данные User не может подтвердить бронирование");
         }
-        if (booking.getStatus().equals(Status.APPROVED.toString())) {
+        if (booking.getStatus().equals(Status.APPROVED)) {
             throw new AvailableCheckException("Бронирование подтверждено ранее. Изменение больше не доступно.");
         }
         if (status) {
-            booking.setStatus(Status.APPROVED.toString());
-        } else booking.setStatus(Status.REJECTED.toString());
+            booking.setStatus(Status.APPROVED);
+        } else booking.setStatus(Status.REJECTED);
         log.info("BookingService - approving().  Подтверждено  {}", booking.toString());
         checkTimeUpdate(booking);
         return BookingMapper.toBookingDtoForReturn(booking);  // Вызов метода save() больше не требуется. return BookingMapper.toBookingDtoForReturn(bookingRepository.save(booking));
@@ -127,75 +128,77 @@ public class BookingService {
         return bookingDtoForReturn;
     }
 
-    public List<BookingDtoForReturn> getByBookerId(long userId, String state) {  // TODO раскоментировать после отладки
+    public List<BookingDtoForReturn> getByBookerId(long userId, State state) {  // TODO раскоментировать после отладки
         Optional<User> booker = userRepository.findById(userId);
         if (booker.isEmpty()) {
             throw new NotExistInDataBase("User не существует");
         }
         switch (state) {
-            case "ALL":
+            case ALL:
                 return bookingRepository.findAllByBookerOrderByStartDesc(userId).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "FUTURE":
+            case FUTURE:
                 return bookingRepository.findAllByBookerOrderByStartDescFuture(userId, LocalDateTime.now(), sort).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "WAITING":
-                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, "WAITING").
+            case WAITING:
+                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.WAITING).  // todo 6
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "REJECTED":
-                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, "REJECTED").
+            case REJECTED:
+                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.REJECTED).  // todo 6
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "CURRENT":
+            case CURRENT:
                 return bookingRepository.findAllByBookerOrderByStartDescCurrent(userId, LocalDateTime.now()).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "PAST":
+            case PAST:
                 return bookingRepository.findAllByBookerPast(userId, LocalDateTime.now()).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
             default:
-                throw new UnknownStatusException("Unknown state: " + state);
+                throw new UnknownStatusException("Unknown state: " + "UNSUPPORTED_STATUS");
         }
     }
 
-    public List<BookingDtoForReturn> getByOwnerId(long ownerId, String state) {  // TODO раскоментировать после отладки
+    public List<BookingDtoForReturn> getByOwnerId(long ownerId, State state) {
         Optional<User> owner = userRepository.findById(ownerId);
         if (owner.isEmpty()) {
             throw new NotExistInDataBase("User не существует");
         }
         switch (state) {
-            case "ALL":
+            case ALL:
                 return bookingRepository.findAllByOwnerOrderByStartDesc(ownerId).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "FUTURE":
+            case FUTURE:
                 return bookingRepository.findAllByOwnerOrderByStartDescFuture(ownerId, LocalDateTime.now()).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "WAITING":
-                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, "WAITING").
+            case WAITING:
+                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.WAITING).  // todo 6
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "REJECTED":
-                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, "REJECTED").
+            case REJECTED:
+                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.REJECTED).  // todo 6
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "CURRENT":
+            case CURRENT:
                 return bookingRepository.findAllByOwnerOrderByStartDescCurrent(ownerId, LocalDateTime.now()).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
-            case "PAST":
+            case PAST:
                 return bookingRepository.findAllByOwnerPast(ownerId, LocalDateTime.now()).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
             default:
-                throw new UnknownStatusException("Unknown state: " + state);
+                throw new UnknownStatusException("Unknown state: " + "UNSUPPORTED_STATUS");
         }
     }
 }
 
-
+//  case "WAITING":
+//                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, "WAITING").  //
+//                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
 

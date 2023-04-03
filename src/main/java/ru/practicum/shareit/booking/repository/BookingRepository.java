@@ -3,6 +3,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +21,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where booking.status = ?2 " +
             "and booking.booker.id = ?1 " +
             "order by booking.start desc")
-    List<Booking> findAllByBookerOrderByStartDescStatus(long userId, String state);
+    List<Booking> findAllByBookerOrderByStartDescStatus(long userId, Status status);
 
 
     @Query("select booking from Booking booking " +
@@ -63,7 +64,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where booking.status = ?2 " +
             "and booking.item.owner = ?1 " +
             "order by booking.status desc")
-    List<Booking> findAllByOwnerOrderByStartDescStatus(long ownerId, String waiting);
+    List<Booking> findAllByOwnerOrderByStartDescStatus(long ownerId, Status status);  // todo 6
 
 
     @Query("select booking from Booking booking " +

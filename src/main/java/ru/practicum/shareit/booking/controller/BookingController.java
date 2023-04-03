@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoForReturn;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.user.dto.Create;
 
@@ -46,7 +47,7 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoForReturn> getByBookerId(@RequestHeader("X-Sharer-User-Id") long userId,
                                                    @RequestParam(defaultValue = "ALL") String state) {
-        List<BookingDtoForReturn> bookingDtos = bookingService.getByBookerId(userId, state);
+        List<BookingDtoForReturn> bookingDtos = bookingService.getByBookerId(userId, State.valueOf(state));
         log.info("BookingController - getByUserId(). Возвращен список из  {} бронирований", bookingDtos.size());
         return bookingDtos;
     }
@@ -54,7 +55,7 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDtoForReturn> getByOwnerId(@RequestHeader("X-Sharer-User-Id") long userId,
                                                   @RequestParam(defaultValue = "ALL") String state) {
-        List<BookingDtoForReturn> bookingDtos = bookingService.getByOwnerId(userId, state);
+        List<BookingDtoForReturn> bookingDtos = bookingService.getByOwnerId(userId, State.valueOf(state));
         log.info("BookingController - getByUserId(). Возвращен список из  {} бронирований", bookingDtos.size());
         return bookingDtos;
     }

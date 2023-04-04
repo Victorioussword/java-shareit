@@ -96,9 +96,7 @@ public class BookingService {
 
     private void checkTimeCreate(Booking booking) {
         if (booking.getEnd().isBefore(booking.getStart()) ||
-                booking.getEnd().isEqual(booking.getStart()) ||
-                booking.getEnd().isBefore(LocalDateTime.now()) ||
-                booking.getStart().isBefore(LocalDateTime.now())) {
+                booking.getEnd().isEqual(booking.getStart())) {
             throw new AvailableCheckException("Период бронирования задан не корректно");
         }
     }
@@ -116,21 +114,19 @@ public class BookingService {
     }
 
     public BookingDtoForReturn getById(long id, long userId) {
-        Optional<Booking> booking = bookingRepository.findById(id);
-        if (booking.isEmpty()) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Бронирование отсутствует");
-        }
-        if (booking.get().getItem().getOwner() != userId && booking.get().getBooker().getId() != userId) {
+        });
+        if (booking.getItem().getOwner() != userId && booking.getBooker().getId() != userId) {
             throw new NotFoundException("Юзеру не доступна информация о бронировании");
         }
-        BookingDtoForReturn bookingDtoForReturn = BookingMapper.toBookingDtoForReturn(booking.get());
+        BookingDtoForReturn bookingDtoForReturn = BookingMapper.toBookingDtoForReturn(booking);
         log.info("BookingService - getById(). Возвращено  {}", booking.toString());
         return bookingDtoForReturn;
     }
 
     public List<BookingDtoForReturn> getByBookerId(long userId, State state) {  // TODO раскоментировать после отладки
-        Optional<User> booker = userRepository.findById(userId);
-        if (booker.isEmpty()) {
+        if (!userRepository.existsById(userId)) {
             throw new NotExistInDataBase("User не существует");
         }
         switch (state) {
@@ -163,8 +159,7 @@ public class BookingService {
     }
 
     public List<BookingDtoForReturn> getByOwnerId(long ownerId, State state) {
-        Optional<User> owner = userRepository.findById(ownerId);
-        if (owner.isEmpty()) {
+        if (!userRepository.existsById(ownerId)) {
             throw new NotExistInDataBase("User не существует");
         }
         switch (state) {

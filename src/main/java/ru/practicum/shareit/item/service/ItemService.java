@@ -57,7 +57,7 @@ public class ItemService {
 
         prepareItemForUpdate(item, itemDto);
         log.info("ItemService - update(). Обновлен {}", item.toString());
-        itemRepository.save(item);
+//        itemRepository.save(item);  // TODO 8
         return ItemMapper.toItemDto(item);
     }
 
@@ -96,7 +96,7 @@ public class ItemService {
         });
 
         if (bookingRepository.findLastBookings(itemId, userId, LocalDateTime.now()).isEmpty()) {
-            throw new AvailableCheckException(//"Booking для " + itemId + " предмета, от пользователя " + userId + " отсутствует." +
+            throw new AvailableCheckException(
                     " Добавить комментарий не возможно");
         }
         log.info("ItemController -  createComment(). Добавлен комментарий {}", commentDto);

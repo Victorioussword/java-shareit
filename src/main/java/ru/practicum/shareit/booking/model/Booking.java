@@ -39,12 +39,8 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Status status;   // TODO 6
+    private Status status;
 }
-
-
-
-
 
 //    Класс Booking в пакете booking будет содержать следующие поля:
 //        id — уникальный идентификатор бронирования;

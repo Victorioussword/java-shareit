@@ -34,8 +34,7 @@ public class BookingMapper {
                 booking.getEnd(),
                 new ItemShort(booking.getItem().getId(), booking.getItem().getName()),
                 new UserShort(booking.getBooker().getId()),
-                booking.getStatus());  // TODO 6
-              //  Status.valueOf(booking.getStatus()));
+                booking.getStatus());
     }
 
     public static BookingShortDto toBookingShortDto(Booking booking) {

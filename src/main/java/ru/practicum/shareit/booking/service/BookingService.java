@@ -41,7 +41,7 @@ public class BookingService {
     public BookingDtoForReturn postBooking(BookingDto bookingDto) {
         Optional<User> booker = userRepository.findById(bookingDto.getBooker());
         if (booker.isEmpty()) {
-            throw new NotExistInDataBase("Booker не обнаружен в базе данных");  //TODO проверить код ответа
+            throw new NotExistInDataBase("Booker не обнаружен в базе данных");
         }
 
         Optional<Item> item = itemRepository.findById(bookingDto.getItemId());
@@ -56,7 +56,7 @@ public class BookingService {
 
         checkTimeCreate(BookingMapper.toBooking(bookingDto, booker.get(), item.get()));
         Booking booking = bookingRepository.save(BookingMapper.toBooking(bookingDto, booker.get(), item.get()));
-        booking.setStatus(Status.WAITING);  // TODO 6
+        booking.setStatus(Status.WAITING);
         log.info("BookingService - postBooking().  ДОбавлено  {}", booking.toString());
         return BookingMapper.toBookingDtoForReturn(bookingRepository.save(booking));
     }
@@ -125,7 +125,7 @@ public class BookingService {
         return bookingDtoForReturn;
     }
 
-    public List<BookingDtoForReturn> getByBookerId(long userId, State state) {  // TODO раскоментировать после отладки
+    public List<BookingDtoForReturn> getByBookerId(long userId, State state) {
         if (!userRepository.existsById(userId)) {
             throw new NotExistInDataBase("User не существует");
         }
@@ -139,11 +139,11 @@ public class BookingService {
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case WAITING:
-                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.WAITING).  // todo 6
+                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.WAITING).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case REJECTED:
-                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.REJECTED).  // todo 6
+                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.REJECTED).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case CURRENT:
@@ -172,11 +172,11 @@ public class BookingService {
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case WAITING:
-                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.WAITING).  // todo 6
+                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.WAITING).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case REJECTED:
-                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.REJECTED).  // todo 6
+                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.REJECTED).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case CURRENT:

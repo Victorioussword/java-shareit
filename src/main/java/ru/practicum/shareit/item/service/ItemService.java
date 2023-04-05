@@ -59,17 +59,13 @@ public class ItemService {
 
         prepareItemForUpdate(item, itemDto);
         log.info("ItemService - update(). Обновлен {}", item.toString());
-//        itemRepository.save(item);  // TODO 8
         return ItemMapper.toItemDto(item);
     }
 
-//    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId) {
-//        List<Item> items = itemRepository.findAllByOwner(ownerId);
-    //       return items.stream()
-//                .sorted(Comparator.comparing(Item::getId))
-    //               .map(this::addBookingsAndComment)
-//                .collect(toList());
-//    }
+    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId) {
+        List<Item> items = itemRepository.findAllByOwnerOrderByIdAsc(ownerId);
+        return addBookingsAndCommentsToList(items);
+    }
 
     public ItemWithBookingAndCommentsDto getById(long id, long userId) {
         Optional<Item> item = itemRepository.findById(id);
@@ -163,13 +159,7 @@ public class ItemService {
         return itemWithBookingAndCommentsDto;
     }
 
-
-    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId) {
-        List<Item> items = itemRepository.findAllByOwnerOrderByIdAsc(ownerId);
-        return addBookingsAndComments2(items);
-    }
-
-    private List<ItemWithBookingAndCommentsDto> addBookingsAndComments2(List<Item> items) {
+    private List<ItemWithBookingAndCommentsDto> addBookingsAndCommentsToList(List<Item> items) {
 
         List<ItemWithBookingAndCommentsDto> forReturn = items.stream().map(ItemMapper::toItemWithBookingAndCommentsDto).collect(toList());
 
@@ -189,7 +179,6 @@ public class ItemService {
                 List<CommentDtoForReturn> comm = comments.get(items.get(i)).stream().map(CommentMapper::toCommentDtoForReturn).collect(toList());
                 forReturn.get(i).setComments(comm);
             }
-
             if (!lasts.isEmpty() && lasts.containsKey(items.get(i))) {
                 List<BookingShortDto> lastBookingsShorts = lasts.get(items.get(i)).stream().map(BookingMapper::toBookingShortDto).collect(toList());
                 forReturn.get(i).setLastBooking(lastBookingsShorts.get(0));

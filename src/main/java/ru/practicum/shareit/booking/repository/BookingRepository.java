@@ -41,7 +41,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "order by booking.start desc")
     List<Booking> findAllByBookerOrderByStartDescCurrent(long userId, LocalDateTime now);
 
-    // Добавил Sort
+
     @Query("select booking from Booking booking " +
             "where booking.start >= ?2 " +
             "and booking.booker.id = ?1 ")
@@ -90,7 +90,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and booking.booker.id = ?2 " +
             "and booking.status like 'APPROVED' " +
             "and booking.end < ?3")
-        //, nativeQuery = true)
     List<Booking> findLastBookings(Long itemId, Long userId, LocalDateTime now);
 
 
@@ -112,14 +111,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "order by booking.start desc ")
     List<Booking> getLastBookings(long id, LocalDateTime now);
 
-    // исправление
     List<Booking> findByItemInAndStartBefore(List<Item> items, LocalDateTime now);
 
     List<Booking> findByItemInAndStartAfter(List<Item> items, LocalDateTime now);
 }
-
-//    @Query("select booking from Booking booking " +
-//            "where booking.start >= ?2 " +
-//            "and booking.booker.id = ?1 " +
-//           "order by booking.start desc")
-//    List<Booking> findAllByBookerOrderByStartDescFuture(long userId, LocalDateTime now, Sort sort);

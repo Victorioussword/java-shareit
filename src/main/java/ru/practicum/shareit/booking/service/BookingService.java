@@ -192,8 +192,4 @@ public class BookingService {
     }
 }
 
-//  case "WAITING":
-//                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, "WAITING").  //
-//                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
-
 

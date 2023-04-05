@@ -71,13 +71,6 @@ public class UserService {
     }
 
 
-    public Optional<User> findByEmail(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        log.info("UserController - findByEmail(). Возвращен  {}", user);
-        return user;
-    }
-
-
     private void checkUnicId(long id) {
         if (userRepository.findById(id).isEmpty()) {
             throw new ValidationException("Пользователь с таким id не существует");

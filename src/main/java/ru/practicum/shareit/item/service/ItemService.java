@@ -2,16 +2,14 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.comment.CommentDto;
-import ru.practicum.shareit.comment.CommentDtoForReturn;
-import ru.practicum.shareit.comment.CommentMapper;
-import ru.practicum.shareit.comment.CommentRepository;
+import ru.practicum.shareit.comment.*;
 import ru.practicum.shareit.exception.AvailableCheckException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -23,10 +21,12 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,6 +37,8 @@ public class ItemService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
+
+    Sort sort = Sort.by(Sort.Direction.DESC, "id");
 
     @Transactional
     public ItemDto createItem(ItemDto itemDto, long userId) {
@@ -61,10 +63,13 @@ public class ItemService {
         return ItemMapper.toItemDto(item);
     }
 
-    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId) {
-        List<Item> items = itemRepository.findAllByOwner(ownerId);
-        return items.stream().sorted(Comparator.comparing(Item::getId)).map(this::addBookingsAndComment).collect(Collectors.toList());
-    }
+//    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId) {
+//        List<Item> items = itemRepository.findAllByOwner(ownerId);
+    //       return items.stream()
+//                .sorted(Comparator.comparing(Item::getId))
+    //               .map(this::addBookingsAndComment)
+//                .collect(toList());
+//    }
 
     public ItemWithBookingAndCommentsDto getById(long id, long userId) {
         Optional<Item> item = itemRepository.findById(id);
@@ -80,7 +85,7 @@ public class ItemService {
 
     public List<ItemDto> search(String text) {
         List<Item> items = itemRepository.search(text);
-        List<ItemDto> itemsDto = items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        List<ItemDto> itemsDto = items.stream().map(ItemMapper::toItemDto).collect(toList());
         log.info("ItemController - search(). Возвращен список из {} предметов", items.size());
         return itemsDto;
     }
@@ -123,11 +128,12 @@ public class ItemService {
             throw new NotFoundException("Id пользователя не соответствует");
         }
     }
+
     private ItemWithBookingAndCommentsDto addComments(Item item) {
         ItemWithBookingAndCommentsDto itemWithBookingAndCommentsDto = ItemMapper.toItemWithBookingAndCommentsDto(item);
         itemWithBookingAndCommentsDto.setComments(commentRepository.findAllByItemId(item.getId())
                 .stream().map(CommentMapper::toCommentDtoForReturn)
-                .collect(Collectors.toList()));
+                .collect(toList()));
         return itemWithBookingAndCommentsDto;
     }
 
@@ -153,8 +159,46 @@ public class ItemService {
         // добавляем комментарии
         itemWithBookingAndCommentsDto.setComments(commentRepository.findAllByItemId(item.getId())
                 .stream().map(CommentMapper::toCommentDtoForReturn)
-                .collect(Collectors.toList()));
+                .collect(toList()));
         return itemWithBookingAndCommentsDto;
     }
 
+
+    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId) {
+        List<Item> items = itemRepository.findAllByOwnerOrderByIdAsc(ownerId);
+        return addBookingsAndComments2(items);
+    }
+
+    private List<ItemWithBookingAndCommentsDto> addBookingsAndComments2(List<Item> items) {
+
+        List<ItemWithBookingAndCommentsDto> forReturn = items.stream().map(ItemMapper::toItemWithBookingAndCommentsDto).collect(toList());
+
+        Map<Item, List<Comment>> comments = commentRepository.findByItemIn(items, sort).stream().collect(groupingBy(Comment::getItem, toList()));
+
+        Map<Item, List<Booking>> lasts = bookingRepository.findByItemInAndStartBefore(items, LocalDateTime.now())
+                .stream()
+                .collect(groupingBy(Booking::getItem, toList()));
+
+        Map<Item, List<Booking>> nexts = bookingRepository.findByItemInAndStartAfter(items, LocalDateTime.now())
+                .stream()
+                .collect(groupingBy(Booking::getItem, toList()));
+
+        for (int i = 0; i < items.size(); i++) {
+
+            if (!comments.isEmpty() && comments.containsKey(items.get(i))) {
+                List<CommentDtoForReturn> comm = comments.get(items.get(i)).stream().map(CommentMapper::toCommentDtoForReturn).collect(toList());
+                forReturn.get(i).setComments(comm);
+            }
+
+            if (!lasts.isEmpty() && lasts.containsKey(items.get(i))) {
+                List<BookingShortDto> lastBookingsShorts = lasts.get(items.get(i)).stream().map(BookingMapper::toBookingShortDto).collect(toList());
+                forReturn.get(i).setLastBooking(lastBookingsShorts.get(0));
+            }
+            if (!nexts.isEmpty()&& nexts.containsKey(items.get(i))) {
+                List<BookingShortDto> nextBookingsShorts = nexts.get(items.get(i)).stream().map(BookingMapper::toBookingShortDto).collect(toList());
+                forReturn.get(i).setNextBooking(nextBookingsShorts.get(nextBookingsShorts.size()-1));
+            }
+        }
+        return forReturn;
+    }
 }

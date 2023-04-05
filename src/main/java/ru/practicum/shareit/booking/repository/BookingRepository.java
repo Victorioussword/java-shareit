@@ -1,9 +1,11 @@
 package ru.practicum.shareit.booking.repository;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,7 +41,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "order by booking.start desc")
     List<Booking> findAllByBookerOrderByStartDescCurrent(long userId, LocalDateTime now);
 
-// Добавил Sort
+    // Добавил Sort
     @Query("select booking from Booking booking " +
             "where booking.start >= ?2 " +
             "and booking.booker.id = ?1 ")
@@ -87,7 +89,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where booking.item.id = ?1 " +
             "and booking.booker.id = ?2 " +
             "and booking.status like 'APPROVED' " +
-            "and booking.end < ?3") //, nativeQuery = true)
+            "and booking.end < ?3")
+        //, nativeQuery = true)
     List<Booking> findLastBookings(Long itemId, Long userId, LocalDateTime now);
 
 
@@ -108,6 +111,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and booking.start < ?2 " +
             "order by booking.start desc ")
     List<Booking> getLastBookings(long id, LocalDateTime now);
+
+    // исправление
+    List<Booking> findByItemInAndStartBefore(List<Item> items, LocalDateTime now);
+
+    List<Booking> findByItemInAndStartAfter(List<Item> items, LocalDateTime now);
 }
 
 //    @Query("select booking from Booking booking " +

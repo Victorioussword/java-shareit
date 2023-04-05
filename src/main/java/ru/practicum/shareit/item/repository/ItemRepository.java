@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    List<Item> findAllByOwner(long id);
+    List<Item> findAllByOwnerOrderByIdAsc(long id);
 
 
     @Query("select i " +

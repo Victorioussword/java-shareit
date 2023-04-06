@@ -9,6 +9,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
@@ -95,23 +96,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // прошлый и следующий
 
-    @Query("select booking from Booking booking " +
-            "where booking.item.id = ?1 " +
-            "and booking.status like 'APPROVED'" +
-            "and booking.end > ?2 " +
-            "and booking.start >= ?2 " +
-            "order by booking.start desc ")
-    List<Booking> getNextBookings(long id, LocalDateTime now);
-
-
-    @Query("select booking from Booking booking " +
-            "where booking.item.id = ?1 " +
-            "and booking.status like 'APPROVED'" +
-            "and booking.start < ?2 " +
-            "order by booking.start desc ")
-    List<Booking> getLastBookings(long id, LocalDateTime now);
-
     List<Booking> findByItemInAndStartBefore(List<Item> items, LocalDateTime now);
 
     List<Booking> findByItemInAndStartAfter(List<Item> items, LocalDateTime now);
+
+    // next
+    Optional<Booking> findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(Item item, Status status, LocalDateTime start);
+
+    // last
+    Optional<Booking> findFirstByItemAndStatusLikeAndStartBeforeOrderByStartDesc(Item item, Status status, LocalDateTime start);
+
+//    ASK - от большего к меньшему
 }

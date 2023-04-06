@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.comment.*;
 import ru.practicum.shareit.exception.AvailableCheckException;
@@ -23,6 +24,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -134,18 +136,22 @@ public class ItemService {
         ItemWithBookingAndCommentsDto itemWithBookingAndCommentsDto = ItemMapper.toItemWithBookingAndCommentsDto(item);
 
         // получение списка с прошлим и следующим букингом
-        List<Booking> nextBookings = bookingRepository.getNextBookings(item.getId(), LocalDateTime.now());
-        List<Booking> lastBookings = bookingRepository.getLastBookings(item.getId(), LocalDateTime.now());
+//        List<Booking> nextBookings = bookingRepository.getNextBookings(item.getId(), LocalDateTime.now());
+//        List<Booking> lastBookings = bookingRepository.getLastBookings(item.getId(), LocalDateTime.now());
+
+
+        Optional<Booking> next = bookingRepository.findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(item, Status.APPROVED, LocalDateTime.now());
+        Optional<Booking> last =bookingRepository.findFirstByItemAndStatusLikeAndStartBeforeOrderByStartDesc(item, Status.APPROVED, LocalDateTime.now());
 
         // добавляем в Item прошлый и следующий букинги
-        if (!nextBookings.isEmpty()) {
-            BookingShortDto bookingShortDtoNext =
-                    BookingMapper.toBookingShortDto(nextBookings.get(nextBookings.size() - 1));
+        if (next.isPresent()) {
+            BookingShortDto bookingShortDtoNext = BookingMapper.toBookingShortDto(next.get());
             itemWithBookingAndCommentsDto.setNextBooking(bookingShortDtoNext);
         }
-        if (!lastBookings.isEmpty()) {
+
+        if (last.isPresent()) {
             BookingShortDto bookingShortDtoLast =
-                    BookingMapper.toBookingShortDto(lastBookings.get(0));
+                    BookingMapper.toBookingShortDto(last.get());
             itemWithBookingAndCommentsDto.setLastBooking(bookingShortDtoLast);
         }
 
@@ -180,9 +186,9 @@ public class ItemService {
                 List<BookingShortDto> lastBookingsShorts = lasts.get(items.get(i)).stream().map(BookingMapper::toBookingShortDto).collect(toList());
                 forReturn.get(i).setLastBooking(lastBookingsShorts.get(0));
             }
-            if (!nexts.isEmpty()&& nexts.containsKey(items.get(i))) {
+            if (!nexts.isEmpty() && nexts.containsKey(items.get(i))) {
                 List<BookingShortDto> nextBookingsShorts = nexts.get(items.get(i)).stream().map(BookingMapper::toBookingShortDto).collect(toList());
-                forReturn.get(i).setNextBooking(nextBookingsShorts.get(nextBookingsShorts.size()-1));
+                forReturn.get(i).setNextBooking(nextBookingsShorts.get(nextBookingsShorts.size() - 1));
             }
         }
         return forReturn;

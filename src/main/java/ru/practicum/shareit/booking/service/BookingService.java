@@ -102,7 +102,7 @@ public class BookingService {
     }
 
     private void checkTimeUpdate(Booking booking) {
-        if (booking.getEnd().isBefore(booking.getStart()) || booking.getEnd().isEqual(booking.getStart())) {
+        if (!booking.getEnd().isAfter(booking.getStart())) {   // todo 11
             throw new AvailableCheckException("Период бронирования задан не корректно");
         }
     }

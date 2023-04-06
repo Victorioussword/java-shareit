@@ -23,7 +23,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -68,15 +67,13 @@ public class ItemService {
     }
 
     public ItemWithBookingAndCommentsDto getById(long id, long userId) {
-        Optional<Item> item = itemRepository.findById(id);
-        if (item.isEmpty()) {
-            throw new NotFoundException("Item не найден");
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Item не найден "));  // todo 11
+        if (item.getOwner() == userId) {
+            log.info("ItemService - getById(). Возвращен {}", item.toString());
+            return addBookingsAndComment(item);
         }
-        if (item.get().getOwner() == userId) {
-            log.info("ItemService - getById(). Возвращен {}", item.orElseThrow().toString());
-            return addBookingsAndComment(item.get());
-        }
-        return addComments(item.get());
+        return addComments(item);
     }
 
     public List<ItemDto> search(String text) {

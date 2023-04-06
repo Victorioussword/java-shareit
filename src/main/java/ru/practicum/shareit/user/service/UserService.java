@@ -50,9 +50,8 @@ public class UserService {
         });
         userDto.setId(id);
         prepareUserForUpdate(user, userDto);
-        UserDto userDtoForReturn = UserMapper.toUserDto(userRepository.save(user));
-        log.info("UserService - update(). Обновлен {}", userDtoForReturn.toString());
-        return userDtoForReturn;
+        log.info("UserService - update(). Обновлен {}", user.toString()); // todo 11
+        return UserMapper.toUserDto(user);
     }
 
     @Transactional

@@ -93,18 +93,27 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and booking.end < ?3")
     List<Booking> findLastBookings(Long itemId, Long userId, LocalDateTime now);
 
-
     // прошлый и следующий
 
-    List<Booking> findByItemInAndStartBefore(List<Item> items, LocalDateTime now);
-
-    List<Booking> findByItemInAndStartAfter(List<Item> items, LocalDateTime now);
+    // last
+    List<Booking> findFirstByItemInAndAndStartBeforeAndStatusEqualsOrderByStartDesc(List<Item> items,
+                                                                                    LocalDateTime now,
+                                                                                    Status status);
 
     // next
-    Optional<Booking> findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(Item item, Status status, LocalDateTime start);
+    List<Booking> findFirstByItemInAndAndStartAfterAndStatusEqualsOrderByStartAsc(List<Item> items,
+                                                                                  LocalDateTime now,
+                                                                                  Status status);
+
+    // next
+    Optional<Booking> findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(Item item,
+                                                                               Status status,
+                                                                               LocalDateTime start);
 
     // last
-    Optional<Booking> findFirstByItemAndStatusLikeAndStartBeforeOrderByStartDesc(Item item, Status status, LocalDateTime start);
+    Optional<Booking> findFirstByItemAndStatusLikeAndStartBeforeOrderByStartDesc(Item item,
+                                                                                 Status status,
+                                                                                 LocalDateTime start);
 
-//    ASK - от большего к меньшему
+//    ASC - от большего к меньшему
 }

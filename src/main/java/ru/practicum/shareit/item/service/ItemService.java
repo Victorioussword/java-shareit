@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.function.UnaryOperator.identity;
+import static java.util.stream.Collectors.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -70,7 +70,7 @@ public class ItemService {
 
     public ItemWithBookingAndCommentsDto getById(long id, long userId) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Item не найден "));  // todo 11
+                .orElseThrow(() -> new NotFoundException("Item не найден "));
         if (item.getOwner() == userId) {
             log.info("ItemService - getById(). Возвращен {}", item.toString());
             return addBookingsAndComment(item);
@@ -100,7 +100,8 @@ public class ItemService {
                     " Добавить комментарий не возможно");
         }
         log.info("ItemController -  createComment(). Добавлен комментарий {}", commentDto);
-        return CommentMapper.toCommentDtoForReturn(commentRepository.save(CommentMapper.toComment(commentDto, user, item)));
+        return CommentMapper.toCommentDtoForReturn(commentRepository.save(CommentMapper
+                .toComment(commentDto, user, item)));
     }
 
 
@@ -135,13 +136,10 @@ public class ItemService {
     private ItemWithBookingAndCommentsDto addBookingsAndComment(Item item) {
         ItemWithBookingAndCommentsDto itemWithBookingAndCommentsDto = ItemMapper.toItemWithBookingAndCommentsDto(item);
 
-        // получение списка с прошлим и следующим букингом
-//        List<Booking> nextBookings = bookingRepository.getNextBookings(item.getId(), LocalDateTime.now());
-//        List<Booking> lastBookings = bookingRepository.getLastBookings(item.getId(), LocalDateTime.now());
-
-
-        Optional<Booking> next = bookingRepository.findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(item, Status.APPROVED, LocalDateTime.now());
-        Optional<Booking> last =bookingRepository.findFirstByItemAndStatusLikeAndStartBeforeOrderByStartDesc(item, Status.APPROVED, LocalDateTime.now());
+        Optional<Booking> next = bookingRepository
+                .findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(item, Status.APPROVED, LocalDateTime.now());
+        Optional<Booking> last = bookingRepository
+                .findFirstByItemAndStatusLikeAndStartBeforeOrderByStartDesc(item, Status.APPROVED, LocalDateTime.now());
 
         // добавляем в Item прошлый и следующий букинги
         if (next.isPresent()) {
@@ -168,13 +166,11 @@ public class ItemService {
 
         Map<Item, List<Comment>> comments = commentRepository.findByItemIn(items, sort).stream().collect(groupingBy(Comment::getItem, toList()));
 
-        Map<Item, List<Booking>> lasts = bookingRepository.findByItemInAndStartBefore(items, LocalDateTime.now())
-                .stream()
-                .collect(groupingBy(Booking::getItem, toList()));
+        Map<Item, Booking> lasts = bookingRepository.findFirstByItemInAndAndStartBeforeAndStatusEqualsOrderByStartDesc(items, LocalDateTime.now(), Status.APPROVED)
+                .stream().collect(toMap(Booking::getItem, identity()));
 
-        Map<Item, List<Booking>> nexts = bookingRepository.findByItemInAndStartAfter(items, LocalDateTime.now())
-                .stream()
-                .collect(groupingBy(Booking::getItem, toList()));
+        Map<Item, Booking> nexts = bookingRepository.findFirstByItemInAndAndStartAfterAndStatusEqualsOrderByStartAsc(items, LocalDateTime.now(), Status.APPROVED)
+                .stream().collect(toMap(Booking::getItem, identity()));
 
         for (int i = 0; i < items.size(); i++) {
 
@@ -183,12 +179,10 @@ public class ItemService {
                 forReturn.get(i).setComments(comm);
             }
             if (!lasts.isEmpty() && lasts.containsKey(items.get(i))) {
-                List<BookingShortDto> lastBookingsShorts = lasts.get(items.get(i)).stream().map(BookingMapper::toBookingShortDto).collect(toList());
-                forReturn.get(i).setLastBooking(lastBookingsShorts.get(0));
+                forReturn.get(i).setLastBooking(BookingMapper.toBookingShortDto(lasts.get(items.get(i))));
             }
             if (!nexts.isEmpty() && nexts.containsKey(items.get(i))) {
-                List<BookingShortDto> nextBookingsShorts = nexts.get(items.get(i)).stream().map(BookingMapper::toBookingShortDto).collect(toList());
-                forReturn.get(i).setNextBooking(nextBookingsShorts.get(nextBookingsShorts.size() - 1));
+                forReturn.get(i).setNextBooking(BookingMapper.toBookingShortDto(nexts.get(items.get(i))));
             }
         }
         return forReturn;

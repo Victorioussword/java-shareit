@@ -96,7 +96,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // прошлый и следующий
 
     // last
-    List<Booking> findFirstByItemInAndAndStartBeforeAndStatusEqualsOrderByStartDesc(List<Item> items,
+    List<Booking> findFirstByItemInAndAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(List<Item> items,
                                                                                     LocalDateTime now,
                                                                                     Status status);
 
@@ -111,7 +111,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                                                LocalDateTime start);
 
     // last
-    Optional<Booking> findFirstByItemAndStatusLikeAndStartBeforeOrderByStartDesc(Item item,
+    Optional<Booking> findFirstByItemAndStatusLikeAndStartLessThanEqualOrderByStartDesc(Item item,
                                                                                  Status status,
                                                                                  LocalDateTime start);
 

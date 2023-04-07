@@ -90,7 +90,7 @@ public class BookingService {
         } else booking.setStatus(Status.REJECTED);
         log.info("BookingService - approving().  Подтверждено  {}", booking.toString());
         checkTimeUpdate(booking);
-        return BookingMapper.toBookingDtoForReturn(booking);  // Вызов метода save() больше не требуется. return BookingMapper.toBookingDtoForReturn(bookingRepository.save(booking));
+        return BookingMapper.toBookingDtoForReturn(booking);
     }
 
 

@@ -86,7 +86,7 @@ public class ItemService {
     }
 
     @Transactional
-    public CommentDtoForReturn createComment(CommentDto commentDto, Long userId, Long itemId) {
+    public CommentDtoOutput createComment(CommentDtoInput commentDto, Long userId, Long itemId) {
         commentDto.setCreated(LocalDateTime.now());
         User user = userRepository.findById(userId).orElseThrow(() -> {
             throw new NotFoundException("Пользователь не найден");
@@ -100,7 +100,7 @@ public class ItemService {
                     " Добавить комментарий не возможно");
         }
         log.info("ItemController -  createComment(). Добавлен комментарий {}", commentDto);
-        return CommentMapper.toCommentDtoForReturn(commentRepository.save(CommentMapper
+        return CommentMapper.toCommentDtoOutput(commentRepository.save(CommentMapper
                 .toComment(commentDto, user, item)));
     }
 
@@ -128,7 +128,7 @@ public class ItemService {
     private ItemWithBookingAndCommentsDto addComments(Item item) {
         ItemWithBookingAndCommentsDto itemWithBookingAndCommentsDto = ItemMapper.toItemWithBookingAndCommentsDto(item);
         itemWithBookingAndCommentsDto.setComments(commentRepository.findAllByItemId(item.getId())
-                .stream().map(CommentMapper::toCommentDtoForReturn)
+                .stream().map(CommentMapper::toCommentDtoOutput)
                 .collect(toList()));
         return itemWithBookingAndCommentsDto;
     }
@@ -139,7 +139,7 @@ public class ItemService {
         Optional<Booking> next = bookingRepository
                 .findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(item, Status.APPROVED, LocalDateTime.now());
         Optional<Booking> last = bookingRepository
-                .findFirstByItemAndStatusLikeAndStartBeforeOrderByStartDesc(item, Status.APPROVED, LocalDateTime.now());
+                .findFirstByItemAndStatusLikeAndStartLessThanEqualOrderByStartDesc(item, Status.APPROVED, LocalDateTime.now());
 
         // добавляем в Item прошлый и следующий букинги
         if (next.isPresent()) {
@@ -155,7 +155,7 @@ public class ItemService {
 
         // добавляем комментарии
         itemWithBookingAndCommentsDto.setComments(commentRepository.findAllByItemId(item.getId())
-                .stream().map(CommentMapper::toCommentDtoForReturn)
+                .stream().map(CommentMapper::toCommentDtoOutput)
                 .collect(toList()));
         return itemWithBookingAndCommentsDto;
     }
@@ -166,7 +166,7 @@ public class ItemService {
 
         Map<Item, List<Comment>> comments = commentRepository.findByItemIn(items, sort).stream().collect(groupingBy(Comment::getItem, toList()));
 
-        Map<Item, Booking> lasts = bookingRepository.findFirstByItemInAndAndStartBeforeAndStatusEqualsOrderByStartDesc(items, LocalDateTime.now(), Status.APPROVED)
+        Map<Item, Booking> lasts = bookingRepository.findFirstByItemInAndAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(items, LocalDateTime.now(), Status.APPROVED)
                 .stream().collect(toMap(Booking::getItem, identity()));
 
         Map<Item, Booking> nexts = bookingRepository.findFirstByItemInAndAndStartAfterAndStatusEqualsOrderByStartAsc(items, LocalDateTime.now(), Status.APPROVED)
@@ -175,7 +175,7 @@ public class ItemService {
         for (int i = 0; i < items.size(); i++) {
 
             if (!comments.isEmpty() && comments.containsKey(items.get(i))) {
-                List<CommentDtoForReturn> comm = comments.get(items.get(i)).stream().map(CommentMapper::toCommentDtoForReturn).collect(toList());
+                List<CommentDtoOutput> comm = comments.get(items.get(i)).stream().map(CommentMapper::toCommentDtoOutput).collect(toList());
                 forReturn.get(i).setComments(comm);
             }
             if (!lasts.isEmpty() && lasts.containsKey(items.get(i))) {

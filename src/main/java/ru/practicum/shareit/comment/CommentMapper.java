@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.model.User;
 @UtilityClass
 public class CommentMapper {
 
-    public static Comment toComment(CommentDto commentDto, User author, Item item) {
+    public static Comment toComment(CommentDtoInput commentDto, User author, Item item) {
         return new Comment(commentDto.getId(),
                 commentDto.getText(),
                 author,
@@ -15,15 +15,15 @@ public class CommentMapper {
                 commentDto.getCreated());
     }
 
-    public static CommentDto toCommentDto(Comment comment) {
-        return new CommentDto(comment.getId(),
+    public static CommentDtoInput toCommentDtoInput(Comment comment) {
+        return new CommentDtoInput(comment.getId(),
                 comment.getText(),
                 comment.getAuthor().getId(),
                 comment.getAuthor().getName(),
                 comment.getCreated());
     }
-    public static CommentDtoForReturn toCommentDtoForReturn(Comment comment) {
-        return new CommentDtoForReturn(comment.getId(),
+    public static CommentDtoOutput toCommentDtoOutput(Comment comment) {
+        return new CommentDtoOutput(comment.getId(),
                 comment.getText(),
                 comment.getAuthor().getId(),
                 comment.getAuthor().getName(),

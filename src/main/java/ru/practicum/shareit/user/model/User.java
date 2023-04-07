@@ -24,7 +24,6 @@ public class User {
     private String name;
 
     @Column(name = "email", unique = true, nullable = false)
-    //@Column(name = "email")
     @Email
     private String email;
 }

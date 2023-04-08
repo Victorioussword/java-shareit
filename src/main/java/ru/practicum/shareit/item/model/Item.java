@@ -24,6 +24,6 @@ public class Item {
     private String description;
     @Column(name = "available")
     private Boolean available;
-    @JoinColumn(name = "owner_id")
+    @Column(name = "owner_id")
     private Long owner;
 }

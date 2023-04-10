@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemShort;
 import ru.practicum.shareit.user.model.User;
@@ -16,7 +17,7 @@ public class BookingMapper {
                 bookingDto.getEnd(),
                 item,
                 user,
-                null);
+                Status.WAITING);
     }
 
     public static BookingDto toBookingDto(Booking booking) {

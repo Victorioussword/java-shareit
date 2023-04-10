@@ -52,13 +52,10 @@ public class BookingService {
         if (booker.get().getId() == item.get().getOwner()) {
             throw new NotFoundException("Владелец не может бронировать свою вещь");
         }
-        checkAvailable(item.orElseThrow());
+        checkAvailable(item.get());
 
         checkTimeCreate(BookingMapper.toBooking(bookingDto, booker.get(), item.get()));
-        Booking booking = bookingRepository.save(BookingMapper.toBooking(bookingDto, booker.get(), item.get()));
-        booking.setStatus(Status.WAITING);
-        log.info("BookingService - postBooking().  ДОбавлено  {}", booking.toString());
-        return BookingMapper.toBookingDtoForReturn(bookingRepository.save(booking));
+        return BookingMapper.toBookingDtoForReturn(bookingRepository.save(BookingMapper.toBooking(bookingDto, booker.get(), item.get())));
     }
 
     private void checkAvailable(Item item) {

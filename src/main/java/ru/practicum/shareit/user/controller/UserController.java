@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
+
 public class UserController {
 
     private final UserService userService;
@@ -51,6 +52,5 @@ public class UserController {
     public void delById(@PathVariable Long id) {
         log.info("UserController - delById(). Удален пользователь с id {}", id);
         userService.delById(id);
-        return;
-    }
+     }
 }

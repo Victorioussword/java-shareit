@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.CommentDtoInput;
+import ru.practicum.shareit.comment.CommentDtoOutput;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.Create;
 
@@ -28,21 +31,21 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ItemDto update(@RequestHeader("X-Sharer-User-Id") Long userIdInHeader, @PathVariable long itemId, @RequestBody ItemDto itemDto) {
         itemDto.setId(itemId);
-        log.info("ItemController - update(). Обновлен {}", itemDto.toString());
         ItemDto itemDtoForReturn = itemService.update(itemDto, itemId, userIdInHeader);
+        log.info("ItemController - update(). Обновлен {}", itemDtoForReturn);
         return itemDtoForReturn;
     }
 
-    @GetMapping("/{id}")
-    public ItemDto getById(@PathVariable long id) {
-        ItemDto itemDto = itemService.getById(id);
-        log.info("ItemController - getById().  Возвращен {}", itemDto.toString());
-        return itemDto;
+    @GetMapping("/{itemId}")
+    public ItemWithBookingAndCommentsDto getById(@PathVariable long itemId, @RequestHeader("X-Sharer-User-Id") long userId) {
+        ItemWithBookingAndCommentsDto item = itemService.getById(itemId, userId);
+        log.info("ItemController - getById(). Возвращен предмет {} предметов", item.toString());
+        return item;
     }
 
     @GetMapping
-    public List<ItemDto> getByOwnerId(@RequestHeader("X-Sharer-User-Id") long ownerId) {
-        List<ItemDto> items = itemService.getByOwnerId(ownerId);
+    public List<ItemWithBookingAndCommentsDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+        List<ItemWithBookingAndCommentsDto> items = itemService.getAllByUserId(userId);
         log.info("ItemController - getByOwnerId(). Возвращен список из {} предметов", items.size());
         return items;
     }
@@ -56,5 +59,12 @@ public class ItemController {
             log.info("ItemController - getByOwnerId(). Возвращен список из {} предметов", items.size());
             return items;
         }
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDtoOutput createComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @PathVariable long itemId,
+                                          @Validated({Create.class}) @RequestBody CommentDtoInput comment) {
+        return itemService.createComment(comment, userId, itemId);
     }
 }

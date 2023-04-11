@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.dto;
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.ArrayList;
+
 @UtilityClass
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
@@ -20,8 +22,18 @@ public class ItemMapper {
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
-                null,
                 null
         );
+    }
+
+    public static ItemWithBookingAndCommentsDto toItemWithBookingAndCommentsDto(Item item) {
+        return new ItemWithBookingAndCommentsDto(item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable(),
+                null,
+                null,
+                new ArrayList<>());
+
     }
 }

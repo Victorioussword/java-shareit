@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,11 +15,18 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
+// старый метод
+//    @Query("select booking from Booking booking " +
+//            "where booking.booker.id = ?1 " +
+//            "order by booking.start desc")
+//    List<Booking> findAllByBookerOrderByStartDesc(long bookerId);
 
-    @Query("select booking from Booking booking " +
-            "where booking.booker.id = ?1 " +
-            "order by booking.start desc")
-    List<Booking> findAllByBookerOrderByStartDesc(long bookerId);
+    @Query(nativeQuery = true,
+            value = "select * from bookings where booker = ?1 " +
+                    "order by bookings.start_time desc",
+            countQuery = "select count(*) from bookings where booker = ?1 " +
+                    "order by bookings.start_time desc")
+    Page<Booking> findAllByBookerOrderByStartDesc(long bookerId, Pageable pageable);
 
 
     @Query("select booking from Booking booking " +
@@ -49,10 +58,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findAllByBookerOrderByStartDescFuture(long userId, LocalDateTime now, Sort sort);
 
 
-    @Query("select booking from Booking booking " +
-            "where booking.item.owner = ?1 " +
-            "order by booking.start desc")
-    List<Booking> findAllByOwnerOrderByStartDesc(long ownerId);
+    @Query(nativeQuery = true,
+            value = "select * from bookings  as b , items as i , users as u  " +
+                    " where b.item_id=i.id and i.owner_id=u.id and u.id = ?1 " +
+                    "order by  b.start_time DESC ",
+            countQuery = "select count(*) from bookings  as b , items as i , users as u  " +
+                    " where b.item_id=i.id and i.owner_id=u.id and u.id = ?1 " +
+                    "group by  b.start_time "+
+                    "order by  b.start_time DESC " )
+    Page<Booking> findAllByOwnerOrderByStartDesc(long ownerId, Pageable pageable);
 
 
     @Query("select booking from Booking booking " +
@@ -97,8 +111,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // last
     List<Booking> findFirstByItemInAndAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(List<Item> items,
-                                                                                    LocalDateTime now,
-                                                                                    Status status);
+                                                                                           LocalDateTime now,
+                                                                                           Status status);
 
     // next
     List<Booking> findFirstByItemInAndAndStartAfterAndStatusEqualsOrderByStartAsc(List<Item> items,
@@ -112,8 +126,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // last
     Optional<Booking> findFirstByItemAndStatusLikeAndStartLessThanEqualOrderByStartDesc(Item item,
-                                                                                 Status status,
-                                                                                 LocalDateTime start);
-
-//    ASC - от большего к меньшему
+                                                                                        Status status,
+                                                                                        LocalDateTime start);
 }

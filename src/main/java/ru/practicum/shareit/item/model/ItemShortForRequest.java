@@ -9,8 +9,14 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemShort {
+public class ItemShortForRequest {
 
     private long id;
     private String name;
+    private String description;
+    private Boolean available;
+    private long ownerId;
+    private long requestId;
+
+
 }

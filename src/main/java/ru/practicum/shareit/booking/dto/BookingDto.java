@@ -29,5 +29,4 @@ public class BookingDto {
     private long itemId;
     @JsonIgnore
     private long booker;
-
 }

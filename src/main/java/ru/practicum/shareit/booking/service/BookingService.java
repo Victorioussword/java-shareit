@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,13 +123,16 @@ public class BookingService {
         return bookingDtoForReturn;
     }
 
-    public List<BookingDtoForReturn> getByBookerId(long userId, State state) {
+    public List<BookingDtoForReturn> getByBookerId(long userId, State state, int from, int size) {
+        if (from < 0) {
+            throw new AvailableCheckException("Отрицательный параметр");
+        }
         if (!userRepository.existsById(userId)) {
             throw new NotExistInDataBase("User не существует");
         }
         switch (state) {
             case ALL:
-                return bookingRepository.findAllByBookerOrderByStartDesc(userId).
+                return bookingRepository.findAllByBookerOrderByStartDesc(userId, PageRequest.of(from / size, size)).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case FUTURE:
@@ -155,13 +159,13 @@ public class BookingService {
         }
     }
 
-    public List<BookingDtoForReturn> getByOwnerId(long ownerId, State state) {
+    public List<BookingDtoForReturn> getByOwnerId(long ownerId, State state, int from, int size) {
         if (!userRepository.existsById(ownerId)) {
             throw new NotExistInDataBase("User не существует");
         }
         switch (state) {
             case ALL:
-                return bookingRepository.findAllByOwnerOrderByStartDesc(ownerId).
+                return bookingRepository.findAllByOwnerOrderByStartDesc(ownerId, PageRequest.of(from, size)).
                         stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case FUTURE:

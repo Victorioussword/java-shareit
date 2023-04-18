@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.CommentDtoInput;
 import ru.practicum.shareit.comment.CommentDtoOutput;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemWithBookingAndCommentsDto;
+import ru.practicum.shareit.item.model.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.Create;
 

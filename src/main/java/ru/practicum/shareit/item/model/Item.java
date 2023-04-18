@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.shareit.request.model.Request;
 
 import javax.persistence.*;
 
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "items")
+
 public class Item {
 
     @Id
@@ -30,4 +32,8 @@ public class Item {
 
     @Column(name = "owner_id")
     private Long owner;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private Request request;
 }

@@ -15,9 +15,11 @@ import ru.practicum.shareit.exception.AvailableCheckException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.Request;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -38,16 +40,23 @@ public class ItemService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-
+    private final RequestRepository requestRepository;
     Sort sort = Sort.by(Sort.Direction.DESC, "id");
 
     @Transactional
     public ItemDto createItem(ItemDto itemDto, long userId) {
+
         User owner = userRepository.findById(userId).orElseThrow(() -> {
             throw new NotFoundException("Владелец вещи не найден");
         });
+        Request request = null;
+        if (itemDto.getRequestId() != null) {
+            request = requestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                    new NotFoundException("Request не найден"));
+        }
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner.getId());
+        item.setRequest(request);
         ItemDto itemDtoForReturn = ItemMapper.toItemDto(itemRepository.save(item));
         log.info("ItemService - метод createItem (). Добавлен Item {}.", itemDtoForReturn.toString());
         return itemDtoForReturn;
@@ -55,9 +64,8 @@ public class ItemService {
 
     @Transactional
     public ItemDto update(ItemDto itemDto, long itemId, Long userIdInHeader) {
-        Item item = itemRepository.getById(itemId);  // получаем из базы
+        Item item = itemRepository.getById(itemId);
         checkEqualsUsersIds(item.getOwner(), userIdInHeader);
-
         prepareItemForUpdate(item, itemDto);
         log.info("ItemService - update(). Обновлен {}", item.toString());
         return ItemMapper.toItemDto(item);

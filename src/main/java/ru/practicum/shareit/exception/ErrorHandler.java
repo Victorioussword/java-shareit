@@ -71,4 +71,3 @@ public class ErrorHandler {
         return Map.of("400 {}", e.toString());
     }
 }
-

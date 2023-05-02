@@ -17,7 +17,7 @@ public class Request {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;                 // — уникальный идентификатор запроса;
+    private Long id;                 // — уникальный идентификатор запроса;
 
     @Column(name = "description")
     private String description;      // — текст запроса, содержащий описание требуемой вещи;
@@ -27,6 +27,4 @@ public class Request {
 
     @Column(name = "created")
     private LocalDateTime created;   // — дата и время создания запроса
-
-
 }

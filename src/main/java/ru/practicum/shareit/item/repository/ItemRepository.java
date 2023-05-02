@@ -20,5 +20,4 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> search(String text);
 
     List<Item> findByRequestIn(List<Request> requests, Sort sort);  // используеся для перевода в Map
-
 }

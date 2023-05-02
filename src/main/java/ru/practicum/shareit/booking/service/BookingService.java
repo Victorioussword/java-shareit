@@ -91,7 +91,6 @@ public class BookingService {
         return BookingMapper.toBookingDtoForReturn(booking);
     }
 
-
     private void checkTimeCreate(Booking booking) {
         if (booking.getEnd().isBefore(booking.getStart()) ||
                 booking.getEnd().isEqual(booking.getStart())) {
@@ -124,9 +123,7 @@ public class BookingService {
     }
 
     public List<BookingDtoForReturn> getByBookerId(long userId, State state, int from, int size) {
-        if (from < 0) {
-            throw new AvailableCheckException("Отрицательный параметр");
-        }
+
         if (!userRepository.existsById(userId)) {
             throw new NotExistInDataBase("User не существует");
         }

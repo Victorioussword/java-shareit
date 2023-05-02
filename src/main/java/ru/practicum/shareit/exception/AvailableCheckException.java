@@ -6,5 +6,3 @@ public class AvailableCheckException extends RuntimeException {
         super(message);
     }
 }
-
-

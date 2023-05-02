@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class DoubleEmailException extends DataIntegrityViolationException {
 
     public DoubleEmailException(String message) {
-            super(message);
-        }
+        super(message);
     }
-
+}

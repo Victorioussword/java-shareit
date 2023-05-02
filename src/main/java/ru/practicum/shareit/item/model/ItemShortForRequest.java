@@ -17,6 +17,4 @@ public class ItemShortForRequest {
     private Boolean available;
     private long ownerId;
     private long requestId;
-
-
 }

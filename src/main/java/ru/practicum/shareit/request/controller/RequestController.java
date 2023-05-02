@@ -55,5 +55,4 @@ public class RequestController {
         log.info(" RequestController -  getRequestById(). Возвращен {}", requestOutputDto.toString());
         return requestOutputDto;
     }
-
 }

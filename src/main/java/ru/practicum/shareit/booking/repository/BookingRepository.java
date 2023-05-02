@@ -15,16 +15,12 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-// старый метод
-//    @Query("select booking from Booking booking " +
-//            "where booking.booker.id = ?1 " +
-//            "order by booking.start desc")
-//    List<Booking> findAllByBookerOrderByStartDesc(long bookerId);
 
     @Query(nativeQuery = true,
             value = "select * from bookings where booker = ?1 " +
                     "order by bookings.start_time desc",
             countQuery = "select count(*) from bookings where booker = ?1 " +
+                    "group by bookings.start_time " +
                     "order by bookings.start_time desc")
     Page<Booking> findAllByBookerOrderByStartDesc(long bookerId, Pageable pageable);
 

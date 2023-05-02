@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.dto.Create;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-
 @Setter
 @Getter
 @AllArgsConstructor
@@ -24,7 +23,4 @@ public class RequestInputDto {
     private long requester;
 
     private LocalDateTime created;
-
-
 }
-

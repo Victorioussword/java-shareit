@@ -9,7 +9,7 @@ import ru.practicum.shareit.request.model.Request;
 import java.util.List;
 import java.util.Optional;
 
-public interface RequestRepository  extends JpaRepository<Request, Long> {
+public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByRequester(Long userId);
 
@@ -20,5 +20,5 @@ public interface RequestRepository  extends JpaRepository<Request, Long> {
     Page<Request> findAllWithoutUserId(Long userId, Pageable pageable);
 
 
-   Optional < Request> findRequestById(long requestId);
+    Optional<Request> findRequestById(long requestId);
 }

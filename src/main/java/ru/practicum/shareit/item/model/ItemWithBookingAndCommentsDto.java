@@ -13,11 +13,11 @@ import java.util.List;
 @Data
 public class ItemWithBookingAndCommentsDto {
 
-        private Long id;
-        private String name;
-        private String description;
-        private Boolean available;
-        private BookingShortDto lastBooking;
-        private BookingShortDto nextBooking;
-        private List<CommentDtoOutput> comments;
-    }
+    private Long id;
+    private String name;
+    private String description;
+    private Boolean available;
+    private BookingShortDto lastBooking;
+    private BookingShortDto nextBooking;
+    private List<CommentDtoOutput> comments;
+}

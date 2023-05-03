@@ -51,8 +51,8 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDtoForReturn> getByOwnerId(@RequestHeader("X-Sharer-User-Id") long userId,
                                                   @RequestParam(defaultValue = "ALL") String state,
-                                                  @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) Integer from,
-                                                  @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @Max(100) Integer size
+                                                  @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                                  @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(100) Integer size
                                                   ) {
         List<BookingDtoForReturn> bookingDtos = bookingService.getByOwnerId(userId, State.valueOf(state), from, size);
         log.info("BookingController - getByUserId(). Возвращен список из  {} бронирований", bookingDtos.size());
@@ -62,8 +62,8 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoForReturn> getByBookerId(@RequestHeader("X-Sharer-User-Id") long userId,
                                                    @RequestParam(defaultValue = "ALL") String state,
-                                                   @RequestParam(name = "from", required = false, defaultValue = "0") @PositiveOrZero Integer from,
-                                                   @RequestParam(name = "size", required = false, defaultValue = "10") @Positive @Max(100) Integer size
+                                                   @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,
+                                                   @RequestParam(name = "size", defaultValue = "10") @Positive @Max(100) Integer size
                                                    ) {
         List<BookingDtoForReturn> bookingDtos = bookingService.getByBookerId(userId, State.valueOf(state), from, size);
         log.info("BookingController - getByUserId(). Возвращен список из  {} бронирований", bookingDtos.size());

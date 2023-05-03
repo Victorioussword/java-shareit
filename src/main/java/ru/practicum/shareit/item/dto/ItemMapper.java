@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 @UtilityClass
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
+    public ItemDto toItemDto(Item item) {
         Long requestId = null;
         if (item.getRequest() != null) {
             requestId = item.getRequest().getId();
@@ -23,7 +23,7 @@ public class ItemMapper {
 
     }
 
-    public static Item toItem(ItemDto itemDto) {
+    public Item toItem(ItemDto itemDto) {
         return new Item(itemDto.getId(),
                 itemDto.getName(),
                 itemDto.getDescription(),
@@ -33,7 +33,7 @@ public class ItemMapper {
     }
 
 
-    public static ItemWithBookingAndCommentsDto toItemWithBookingAndCommentsDto(Item item) {
+    public ItemWithBookingAndCommentsDto toItemWithBookingAndCommentsDto(Item item) {
         return new ItemWithBookingAndCommentsDto(item.getId(),
                 item.getName(),
                 item.getDescription(),

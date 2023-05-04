@@ -99,7 +99,7 @@ public class RequestServiceTest {
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, request1);
         Item item2 = new Item(2L, "item2", "description Item2", true, 1L, request1);
         List<Item> items = List.of(item1, item2);
-        when(requestRepository.findAllWithoutUserId(anyLong(), any()))
+        when(requestRepository.findRequestsByRequesterNotOrderByCreatedDesc(anyLong(), any()))
                 .thenReturn(new PageImpl<Request>(Collections.singletonList(request1)));
         when(itemRepository.findByRequestIn(anyList(), any())).thenReturn(items);
 

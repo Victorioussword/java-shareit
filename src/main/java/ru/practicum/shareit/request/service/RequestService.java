@@ -20,10 +20,8 @@ import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -68,30 +66,37 @@ public class RequestService {
 
     public List<RequestOutputDto> getAllRequests(Long userId, Integer from, Integer size) {
 
-        List<Request> requests = requestRepository.findAllWithoutUserId(userId, PageRequest.of(from, size))
-                .stream()
-                .sorted(Comparator.comparing(Request::getCreated))
-                .collect(Collectors.toList());
+        List<Request> requests = requestRepository.findRequestsByRequesterNotOrderByCreatedDesc (userId, PageRequest.of(from, size)).toList();
 
-        Map<Request, List<Item>> requestListMap = itemRepository.findByRequestIn(requests, sort).stream().collect(groupingBy(Item::getRequest, toList()));
+        return prepareRequests(requests);
 
-        List<RequestOutputDto> requestOutputDtoList = requestRepository.findAllWithoutUserId(userId, PageRequest.of(from, size))
-                .stream()
-                .map(RequestMapper::toRequestOutputDto)
-                .sorted(Comparator.comparing(RequestOutputDto::getCreated))
-                .collect(Collectors.toList());
+//        Map<Request, List<Item>> requestListMap = itemRepository.findByRequestIn(requests, sort)
+//                .stream()
+//                .collect(groupingBy(Item::getRequest, toList()));
 
-        for (int i = 0; i < requests.size(); i++) {
+//        List<RequestOutputDto> requestOutputDtoList = requests
+//                .stream()
+//                .map(RequestMapper::toRequestOutputDto)
+//                .sorted(Comparator.comparing(RequestOutputDto::getCreated))
+//                .collect(Collectors.toList());
 
-            List<ItemShortForRequest> itemShortForRequests = requestListMap.get(requests.get(i))
-                    .stream()
-                    .map(ItemMapper::toItemShortForRequest)
-                    .collect(Collectors.toList());
+//        List<RequestOutputDto> requestOutputDtoList2 = requestRepository.findAllWithoutUserId(userId, PageRequest.of(from, size))
+//                .stream()
+//                .map(RequestMapper::toRequestOutputDto)
+//                .sorted(Comparator.comparing(RequestOutputDto::getCreated))
+//                .collect(Collectors.toList());
 
-            requestOutputDtoList.get(i).setItems(itemShortForRequests);
-        }
+//        for (int i = 0; i < requests.size(); i++) {
 
-        return requestOutputDtoList;
+//            List<ItemShortForRequest> itemShortForRequests = requestListMap.get(requests.get(i))
+//                    .stream()
+//                    .map(ItemMapper::toItemShortForRequest)
+//                    .collect(Collectors.toList());
+
+//            requestOutputDtoList.get(i).setItems(itemShortForRequests);
+//        }
+
+//        return requestOutputDtoList;
     }
 
 

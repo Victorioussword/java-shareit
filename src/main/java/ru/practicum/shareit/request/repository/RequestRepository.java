@@ -19,6 +19,8 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             countQuery = "select count(*) from REQUESTS where REQUESTS.requester_id !=?1")
     Page<Request> findAllWithoutUserId(Long userId, Pageable pageable);
 
+    Page<Request> findRequestsByRequesterNotOrderByCreatedDesc(Long requester, Pageable pageable);
+
 
     Optional<Request> findRequestById(long requestId);
 }

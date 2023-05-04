@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,8 +73,9 @@ public class ItemService {
         return ItemMapper.toItemDto(item);
     }
 
-    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId) {
-        List<Item> items = itemRepository.findAllByOwnerOrderByIdAsc(ownerId);
+    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId, int from, int size) {
+        Page<Item> itemsPage = itemRepository.findAllByOwnerOrderByIdAsc(ownerId, PageRequest.of(from, size));
+        List<Item> items = itemsPage.toList();
         return addBookingsAndCommentsToList(items);
     }
 
@@ -86,12 +89,14 @@ public class ItemService {
         return addComments(item);
     }
 
-    public List<ItemDto> search(String text) {
-        List<Item> items = itemRepository.search(text);
-        List<ItemDto> itemsDto = items.stream().map(ItemMapper::toItemDto).collect(toList());
-        log.info("ItemController - search(). Возвращен список из {} предметов", items.size());
+    public List<ItemDto> search(String text, int from, int size) {
+        Page<Item> items = itemRepository.search(text, PageRequest.of(from, size));
+        List<Item> itemList = items.toList();
+        List<ItemDto> itemsDto = itemList.stream().map(ItemMapper::toItemDto).collect(toList());
+        log.info("ItemController - search(). Возвращен список из {} предметов", itemList.size());
         return itemsDto;
     }
+
 
     @Transactional
     public CommentDtoOutput createComment(CommentDtoInput commentDto, Long userId, Long itemId) {

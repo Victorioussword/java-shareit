@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.model.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.Create;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,18 +46,25 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemWithBookingAndCommentsDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
-        List<ItemWithBookingAndCommentsDto> items = itemService.getAllByUserId(userId);
+    public List<ItemWithBookingAndCommentsDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                              @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                                              @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(100) Integer size
+    ) {
+        List<ItemWithBookingAndCommentsDto> items = itemService.getAllByUserId(userId, from, size);
         log.info("ItemController - getByOwnerId(). Возвращен список из {} предметов", items.size());
         return items;
     }
 
+
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam String text) {
+    public List<ItemDto> search(@RequestParam String text,
+                                 @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(100) Integer size
+    ) {
         if (text.isBlank()) {
             return Collections.emptyList();
         } else {
-            List<ItemDto> items = itemService.search(text);
+            List<ItemDto> items = itemService.search(text, from, size);
             log.info("ItemController - getByOwnerId(). Возвращен список из {} предметов", items.size());
             return items;
         }

@@ -99,7 +99,7 @@ public class BookingService {
     }
 
     private void checkTimeUpdate(Booking booking) {
-        if (!booking.getEnd().isAfter(booking.getStart())) {   // todo 11
+        if (!booking.getEnd().isAfter(booking.getStart())) {
             throw new AvailableCheckException("Период бронирования задан не корректно");
         }
     }

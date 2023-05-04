@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import ru.practicum.shareit.item.model.Item;
@@ -61,10 +63,11 @@ public class ItemRepositoryTest {
     @DirtiesContext
     @Test
     void shouldSearch() {
-
-        List<Item> itemsAfter = itemRepository.search("item");
-        assertEquals(2, itemsAfter.size());
-        assertEquals(1, itemsAfter.get(0).getId());
-        assertEquals(2, itemsAfter.get(1).getId());
+        PageRequest pageRequest = PageRequest.of(0, 2);
+        Page<Item> itemsAfter = itemRepository.search("item" , pageRequest);
+        List<Item> itemList =  itemsAfter.toList();
+        assertEquals(2, itemList.size());
+        assertEquals(1, itemList.get(0).getId());
+        assertEquals(2, itemList.get(1).getId());
     }
 }

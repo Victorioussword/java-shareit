@@ -50,7 +50,7 @@ public class UserService {
         });
         userDto.setId(id);
         prepareUserForUpdate(user, userDto);
-        log.info("UserService - update(). Обновлен {}", user.toString()); // todo 11
+        log.info("UserService - update(). Обновлен {}", user.toString());
         return UserMapper.toUserDto(user);
     }
 

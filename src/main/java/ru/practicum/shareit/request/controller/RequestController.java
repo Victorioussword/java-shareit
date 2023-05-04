@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/requests")
+@Validated
 public class RequestController {
 
     private final RequestService requestService;
@@ -25,7 +26,7 @@ public class RequestController {
     //  1. POST /requests — добавить новый запрос вещи.
     @PostMapping
     public RequestOutputDto createRequest(@Validated(Create.class) @RequestBody RequestInputDto requestInputDto,
-                                          @RequestHeader("X-Sharer-User-Id") long userId) {  // todo добавить автора запроса
+                                          @RequestHeader("X-Sharer-User-Id") long userId) {
         log.info(" RequestController -  createRequest(). Создан {}", requestInputDto.toString());
         return requestService.createRequest(requestInputDto, userId);
     }
@@ -42,15 +43,15 @@ public class RequestController {
     // 3.  GET /requests/all?from={from}&size={size} — получить список запросов,
     @GetMapping("/all")
     public List<RequestOutputDto> getAllRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                 @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) Integer from,
-                                                 @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @Max(100) Integer size) {
+                                                 @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                                 @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(100) Integer size) {
         return requestService.getAllRequests(userId, from, size);
     }
 
     // 4. GET /requests/{requestId} — получить данные об одном конкретном запросе
     @GetMapping("/{requestId}")
     public RequestOutputDto getRequestById(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @PathVariable(required = true, name = "requestId") Long requestId) {
+                                           @PathVariable( name = "requestId") Long requestId) {
         RequestOutputDto requestOutputDto = requestService.getRequestById(requestId, userId);
         log.info(" RequestController -  getRequestById(). Возвращен {}", requestOutputDto.toString());
         return requestOutputDto;

@@ -127,7 +127,7 @@ public class ItemControllerTest {
         itemWithBookingAndCommentsDtoList.add(itemWithBookingAndCommentsDto1);
         itemWithBookingAndCommentsDtoList.add(itemWithBookingAndCommentsDto2);
 
-        when(itemService.getAllByUserId(anyLong())).thenReturn(itemWithBookingAndCommentsDtoList);
+        when(itemService.getAllByUserId(anyLong(), anyInt(), anyInt())).thenReturn(itemWithBookingAndCommentsDtoList);
 
         mvc.perform(get("/items").header("X-Sharer-User-Id", userId)
                 .content(mapper.writeValueAsString(itemWithBookingAndCommentsDtoList))
@@ -148,7 +148,7 @@ public class ItemControllerTest {
         itemsDto.add(itemDto1);
         itemsDto.add(itemDto2);
 
-        when(itemService.search(anyString())).thenReturn(itemsDto);
+        when(itemService.search(anyString(), anyInt(), anyInt())).thenReturn(itemsDto);
 
         mvc.perform(get("/items/search").param("text", "description")
                 .content(mapper.writeValueAsString(itemsDto))

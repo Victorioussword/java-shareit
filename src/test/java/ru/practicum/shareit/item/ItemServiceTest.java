@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -14,11 +15,11 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,9 +43,6 @@ public class ItemServiceTest {
 
     @Mock
     private BookingRepository bookingRepository;
-
-    @Mock
-    private RequestRepository requestRepository;
 
     @InjectMocks
     ItemService itemService;
@@ -77,9 +75,11 @@ public class ItemServiceTest {
     @Test
     void shouldGetAllByUserId() {
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
-        when(itemRepository.findAllByOwnerOrderByIdAsc(anyLong())).thenReturn(List.of(item1));
-        itemService.getAllByUserId(1l);
-        verify(itemRepository).findAllByOwnerOrderByIdAsc(anyLong());
+        when(itemRepository.findAllByOwnerOrderByIdAsc(anyLong(), any())).thenReturn(new PageImpl<Item>(Collections.singletonList(item1)));
+
+
+        itemService.getAllByUserId(1l, 0, 1);
+        verify(itemRepository).findAllByOwnerOrderByIdAsc(anyLong(), any());
         verify(commentRepository).findByItemIn(any(), any());
         verify(bookingRepository).findFirstByItemInAndAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(any(), any(), any());
         verify(bookingRepository).findFirstByItemInAndAndStartAfterAndStatusEqualsOrderByStartAsc(any(), any(), any());
@@ -107,13 +107,12 @@ public class ItemServiceTest {
     @Test
     void shouldSearch() {
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
-        Item item2 = new Item(2L, "item2", "description Item2", true, 1L, null);
         ItemDto itemDto1 = ItemMapper.toItemDto(item1);
-        ItemDto itemDto2 = ItemMapper.toItemDto(item2);
-        List<Item> items = List.of(item1, item2);
-        List<ItemDto> itemDtosBefore = List.of(itemDto1, itemDto2);
-        when(itemRepository.search(any())).thenReturn(items);
-        List<ItemDto> itemDtosAfter = itemService.search("text");
+        List<ItemDto> itemDtosBefore = List.of(itemDto1);
+        when(itemRepository.search(any(), any()))
+                .thenReturn(new PageImpl<Item>(Collections.singletonList(item1)));
+
+        List<ItemDto> itemDtosAfter = itemService.search("text", 0, 1);
 
         assertEquals(itemDtosBefore.size(), itemDtosAfter.size());
         assertEquals(itemDtosBefore.get(0).getId(), itemDtosAfter.get(0).getId());

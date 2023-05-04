@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -13,6 +15,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,17 +97,40 @@ public class UserServiceTest {
         users.add(user2);
         dtos.add(userDto1);
         dtos.add(userDto2);
-        when(userRepository.findAll()).thenReturn(users);
-        List<UserDto> usersAfter = userService.getAll();
 
-        assertThat(usersAfter.size()).isEqualTo(users.size());
+        when(userRepository.findAll((Pageable) any())).thenReturn(new PageImpl<User>(Collections.singletonList(user1)));
+        List<UserDto> usersAfter = userService.getAll(0, 1);
 
-        assertThat(usersAfter.get(0).getId()).isEqualTo(users.get(0).getId());
-        assertThat(usersAfter.get(0).getName()).isEqualTo(users.get(0).getName());
-        assertThat(usersAfter.get(0).getEmail()).isEqualTo(users.get(0).getEmail());
+        assertThat(usersAfter.size()).isEqualTo(1);
 
-        assertThat(usersAfter.get(1).getId()).isEqualTo(users.get(1).getId());
-        assertThat(usersAfter.get(1).getName()).isEqualTo(users.get(1).getName());
-        assertThat(usersAfter.get(1).getEmail()).isEqualTo(users.get(1).getEmail());
+        assertThat(usersAfter.get(0).getId()).isEqualTo(user1.getId());
+        assertThat(usersAfter.get(0).getName()).isEqualTo(user1.getName());
+        assertThat(usersAfter.get(0).getEmail()).isEqualTo(user1.getEmail());
+
     }
+    @Test
+    void shouldError500() {
+        User user1 = new User(1L, "userName1", "user1@mail.ru");
+        UserDto userDto1 = UserMapper.toUserDto(user1);
+        User user2 = new User(2L, "userName2", "user2@mail.ru");
+        UserDto userDto2 = UserMapper.toUserDto(user1);
+
+        List<UserDto> dtos = new ArrayList<>();
+        List<User> users = new ArrayList<>();
+        users.add(user1);
+        users.add(user2);
+        dtos.add(userDto1);
+        dtos.add(userDto2);
+
+        when(userRepository.findAll((Pageable) any())).thenReturn(new PageImpl<User>(Collections.singletonList(user1)));
+        List<UserDto> usersAfter = userService.getAll(-10,-2);
+
+        assertThat(usersAfter.size()).isEqualTo(1);
+
+        assertThat(usersAfter.get(0).getId()).isEqualTo(user1.getId());
+        assertThat(usersAfter.get(0).getName()).isEqualTo(user1.getName());
+        assertThat(usersAfter.get(0).getEmail()).isEqualTo(user1.getEmail());
+
+    }
+
 }

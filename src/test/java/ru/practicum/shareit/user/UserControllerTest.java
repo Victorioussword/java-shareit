@@ -8,10 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -22,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-@SpringBootTest
+@WebMvcTest(controllers = UserController.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class UserControllerTest {
@@ -53,7 +53,7 @@ public class UserControllerTest {
         userDtos.add(userDto1);
         userDtos.add(userDto2);
 
-        when(userService.getAll()).thenReturn(userDtos);
+        when(userService.getAll(anyInt(), anyInt())).thenReturn(userDtos);
 
         mvc.perform(get("/users"))
                 .andExpect(status().isOk())
@@ -134,5 +134,28 @@ public class UserControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @Test
+    void shouldReturn500() throws Exception {
+        Long userId = 1l;
+        User user1 = new User(1L, "userName1", "user1@mail.ru");
+        User user2 = new User(2L, "userName2", "user2@mail.ru");
+        UserDto userDto1 = UserMapper.toUserDto(user1);
+        UserDto userDto2 = UserMapper.toUserDto(user2);
+        List<UserDto> userDtos = new ArrayList<>();
+        userDtos.add(userDto1);
+        userDtos.add(userDto2);
+
+        when(userService.getAll(anyInt(), anyInt())).thenReturn(userDtos);
+
+        mvc.perform(get("/users").header("X-Sharer-User-Id", userId)
+                .content(mapper.writeValueAsString(userDtos))
+                .param("from", String.valueOf(-1))
+                .param("size", String.valueOf(-2))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
+    }
+
 }
 

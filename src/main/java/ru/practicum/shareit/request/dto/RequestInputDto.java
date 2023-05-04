@@ -1,26 +1,17 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import ru.practicum.shareit.user.dto.Create;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
 
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class RequestInputDto {
 
-    private long id;
-
-    @NotNull(groups = Create.class)
+    @NotBlank(groups = Create.class)
     private String description;
-
-    private long requester;
-
-    private LocalDateTime created;
 }

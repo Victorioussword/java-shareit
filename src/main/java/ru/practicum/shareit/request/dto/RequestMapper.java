@@ -1,9 +1,12 @@
 package ru.practicum.shareit.request.dto;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.request.model.Request;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+@UtilityClass
 public class RequestMapper {
 
     public static RequestOutputDto toRequestOutputDto(Request request) {
@@ -14,10 +17,10 @@ public class RequestMapper {
                 new ArrayList<>());  // список Item
     }
 
-    public static Request toRequest(RequestInputDto requestInputDto) {
-        return new Request(requestInputDto.getId(),
+    public static Request toRequest(RequestInputDto requestInputDto, Long userId) {
+        return new Request(0L,
                 requestInputDto.getDescription(),
-                requestInputDto.getRequester(),
-                requestInputDto.getCreated());
+                userId,
+                LocalDateTime.now());
     }
 }

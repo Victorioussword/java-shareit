@@ -27,6 +27,7 @@ public class RequestController {
     @PostMapping
     public RequestOutputDto createRequest(@Validated(Create.class) @RequestBody RequestInputDto requestInputDto,
                                           @RequestHeader("X-Sharer-User-Id") long userId) {
+
         log.info(" RequestController -  createRequest(). Создан {}", requestInputDto.toString());
         return requestService.createRequest(requestInputDto, userId);
     }
@@ -51,7 +52,7 @@ public class RequestController {
     // 4. GET /requests/{requestId} — получить данные об одном конкретном запросе
     @GetMapping("/{requestId}")
     public RequestOutputDto getRequestById(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @PathVariable( name = "requestId") Long requestId) {
+                                           @PathVariable(name = "requestId") Long requestId) {
         RequestOutputDto requestOutputDto = requestService.getRequestById(requestId, userId);
         log.info(" RequestController -  getRequestById(). Возвращен {}", requestOutputDto.toString());
         return requestOutputDto;

@@ -42,10 +42,9 @@ public class RequestServiceTest {
     @Test
     void shouldCreateRequest() {
         LocalDateTime timeCreated = LocalDateTime.now();
-        RequestInputDto requestInputDto = new RequestInputDto(1l,
-                " descriptionOfRequest1",
-                1l,
-                timeCreated);
+        RequestInputDto requestInputDto = new RequestInputDto(
+                " descriptionOfRequest1"
+           );
 
         Request request = new Request(1l,
                 " descriptionOfRequest1",

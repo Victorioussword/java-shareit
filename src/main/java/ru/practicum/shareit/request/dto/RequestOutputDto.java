@@ -17,5 +17,5 @@ public class RequestOutputDto {
     private String description;
     private long requestor;
     private LocalDateTime created;
-    List<ItemShortForRequest> items;
+    private List<ItemShortForRequest> items;
 }

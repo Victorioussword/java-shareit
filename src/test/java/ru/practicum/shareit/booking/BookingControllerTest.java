@@ -188,6 +188,41 @@ public class BookingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(listBookings)));
     }
+
+    @Test
+            void shouldReturnStatus500() throws Exception {
+        Long userId = 1L;
+        UserShort userShort1 = new UserShort(1l);
+
+        BookingDtoForReturn bookingDtoForReturn1 = new BookingDtoForReturn(1l,
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2),
+                new ItemShort(1l, "ItemName1"),
+                userShort1,
+                Status.WAITING);
+
+        BookingDtoForReturn bookingDtoForReturn2 = new BookingDtoForReturn(2l,
+                LocalDateTime.now().plusDays(2),
+                LocalDateTime.now().plusDays(3),
+                new ItemShort(1l, "ItemName2"),
+                userShort1,
+                Status.APPROVED);
+
+        List<BookingDtoForReturn> listBookings = List.of(bookingDtoForReturn1, bookingDtoForReturn2);
+
+        when(bookingService.getByBookerId(anyLong(), any(), anyInt(), anyInt())).thenReturn(listBookings);
+
+        mvc.perform(get("/bookings")
+                .header("X-Sharer-User-Id", userId)
+                .param("from", String.valueOf(-1))
+                .param("size", String.valueOf(-2))
+                .content(mapper.writeValueAsString(listBookings))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError())
+        ;
+    }
 }
 
 

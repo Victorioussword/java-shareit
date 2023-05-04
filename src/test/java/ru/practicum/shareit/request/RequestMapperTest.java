@@ -28,15 +28,13 @@ public class RequestMapperTest {
 
     @Test
     void toRequestTest() {
-        RequestInputDto requestInputDto = new RequestInputDto(1l,
-                " descriptionOfRequest1",
-                1l,
-                LocalDateTime.now());
-        Request request = RequestMapper.toRequest(requestInputDto);
+        RequestInputDto requestInputDto = new RequestInputDto(
+                " descriptionOfRequest1");
+        Request request = RequestMapper.toRequest(requestInputDto, 1L);
 
-        assertEquals(request.getId(), requestInputDto.getId());
+//        assertEquals(request.getId(), requestInputDto.getId());
         assertEquals(request.getDescription(), requestInputDto.getDescription());
-        assertEquals(request.getDescription(), requestInputDto.getDescription());
-        assertEquals(request.getCreated(), requestInputDto.getCreated());
+//        assertEquals(request.getDescription(), requestInputDto.getDescription());
+//        assertEquals(request.getCreated(), requestInputDto.getCreated());
     }
 }

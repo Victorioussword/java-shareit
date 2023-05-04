@@ -51,15 +51,14 @@ public class RequestControllerTest {
 
     @Test
     void createRequestTest() throws Exception {
+        LocalDateTime time = LocalDateTime.now();
         Request request = new Request(1l,
                 " descriptionOfRequest1",
                 1l,
                 LocalDateTime.now());
         Long userId = 1L;
-        RequestInputDto requestInputDto = new RequestInputDto(1l,
-                " descriptionOfRequest1",
-                1l,
-                LocalDateTime.now());
+        RequestInputDto requestInputDto = new RequestInputDto(
+                " descriptionOfRequest1");
         List<ItemShortForRequest> itemShortForRequests = new ArrayList<>();
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, request);
         ItemShortForRequest itemShortForRequest1 = ItemMapper.toItemShortForRequest(item1);
@@ -69,10 +68,10 @@ public class RequestControllerTest {
         itemShortForRequests.add(itemShortForRequest1);
         itemShortForRequests.add(itemShortForRequest2);
 
-        RequestOutputDto requestOutputDto = new RequestOutputDto(requestInputDto.getId(),
+        RequestOutputDto requestOutputDto = new RequestOutputDto(1L,
                 requestInputDto.getDescription(),
-                requestInputDto.getRequester(),
-                requestInputDto.getCreated(),
+                userId,
+                 time,
                 itemShortForRequests);
 
         when(requestService.createRequest(any(), anyLong())).thenReturn(requestOutputDto);
@@ -155,10 +154,10 @@ public class RequestControllerTest {
                 LocalDateTime.now());
         Long userId = 1L;
         Long requestId = 1L;
-        RequestInputDto requestInputDto = new RequestInputDto(1l,
-                " descriptionOfRequest1",
-                1l,
-                LocalDateTime.now());
+        LocalDateTime time = LocalDateTime.now();
+        RequestInputDto requestInputDto = new RequestInputDto(
+                " descriptionOfRequest1"
+                );
         List<ItemShortForRequest> itemShortForRequests = new ArrayList<>();
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, request);
         ItemShortForRequest itemShortForRequest1 = ItemMapper.toItemShortForRequest(item1);
@@ -168,10 +167,10 @@ public class RequestControllerTest {
         itemShortForRequests.add(itemShortForRequest1);
         itemShortForRequests.add(itemShortForRequest2);
 
-        RequestOutputDto requestOutputDto = new RequestOutputDto(requestInputDto.getId(),
+        RequestOutputDto requestOutputDto = new RequestOutputDto(1L,
                 requestInputDto.getDescription(),
-                requestInputDto.getRequester(),
-                requestInputDto.getCreated(),
+                userId,
+                time,
                 itemShortForRequests);
 
         when(requestService.getRequestById(anyLong(), anyLong())).thenReturn(requestOutputDto);

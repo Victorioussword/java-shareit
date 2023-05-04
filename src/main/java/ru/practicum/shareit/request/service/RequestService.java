@@ -19,7 +19,6 @@ import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -35,21 +34,20 @@ import static java.util.stream.Collectors.toList;
 @Transactional(readOnly = true)
 public class RequestService {
 
-    Sort sort = Sort.by(Sort.Direction.DESC, "id");
+    private Sort sort = Sort.by(Sort.Direction.DESC, "id");
     private final RequestRepository requestRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
     @Transactional
     public RequestOutputDto createRequest(RequestInputDto requestInputDto, long userId) {
-        requestInputDto.setCreated(LocalDateTime.now());
-        requestInputDto.setRequester(userId);
+
+        Request request = RequestMapper.toRequest(requestInputDto, userId);
         if (!userRepository.existsById(userId)) {
             throw new NotExistInDataBase("User c Id " + userId + " не существует");
         }
-
         RequestOutputDto requestOutputDto = RequestMapper.toRequestOutputDto(requestRepository
-                .save(RequestMapper.toRequest(requestInputDto)));
+                .save(request));
 
         log.info("RequestService - createRequest(). Создан {}", requestOutputDto.toString());
         return requestOutputDto;
@@ -101,7 +99,7 @@ public class RequestService {
         Request request = requestRepository.findRequestById(requestId)
                 .orElseThrow(() -> new NotFoundException("Request не найден "));
 
-        if(!userRepository.existsById(userId)){
+        if (!userRepository.existsById(userId)) {
             throw new NotExistInDataBase("Пользователь не существует");
         }
 

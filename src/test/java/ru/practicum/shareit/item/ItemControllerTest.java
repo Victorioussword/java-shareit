@@ -176,9 +176,29 @@ public class ItemControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(commentDtoOutput)));
-        ;
-
-
     }
 
+    @Test
+    void shouldThrow500() throws Exception {
+        long userId = 1;
+        Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
+        ItemWithBookingAndCommentsDto itemWithBookingAndCommentsDto1 = ItemMapper.toItemWithBookingAndCommentsDto(item1);
+        Item item2 = new Item(2L, "item2", "description Item2", true, 1L, null);
+        ItemWithBookingAndCommentsDto itemWithBookingAndCommentsDto2 = ItemMapper.toItemWithBookingAndCommentsDto(item2);
+        List<ItemWithBookingAndCommentsDto> itemWithBookingAndCommentsDtoList = new ArrayList<>();
+        itemWithBookingAndCommentsDtoList.add(itemWithBookingAndCommentsDto1);
+        itemWithBookingAndCommentsDtoList.add(itemWithBookingAndCommentsDto2);
+
+        when(itemService.getAllByUserId(anyLong(), anyInt(), anyInt())).thenReturn(itemWithBookingAndCommentsDtoList);
+
+        mvc.perform(get("/items").header("X-Sharer-User-Id", userId)
+                .content(mapper.writeValueAsString(itemWithBookingAndCommentsDtoList))
+                .param("from", String.valueOf(-1))
+                .param("size", String.valueOf(-2))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError())
+                ;
+    }
 }

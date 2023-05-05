@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,11 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class ItemWithBookingAndCommentsDto {
-        private Long id;
-        private String name;
-        private String description;
-        private Boolean available;
-        private BookingShortDto lastBooking;
-        private BookingShortDto nextBooking;
-        private List<CommentDtoOutput> comments;
-    }
+
+    private Long id;
+    private String name;
+    private String description;
+    private Boolean available;
+    private BookingShortDto lastBooking;
+    private BookingShortDto nextBooking;
+    private List<CommentDtoOutput> comments;
+}

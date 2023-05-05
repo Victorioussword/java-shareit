@@ -9,13 +9,15 @@ import ru.practicum.shareit.user.dto.Update;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
-
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -41,8 +43,9 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getAll() {
-        List<UserDto> userDtos = userService.getAll();
+    public List<UserDto> getAll(   @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                   @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(100) Integer size) {
+        List<UserDto> userDtos = userService.getAll(from, size);
         log.info("UserController - getAll(). Возвращен список из {} пользователей", userDtos.size());
         return userDtos;
     }
@@ -52,5 +55,5 @@ public class UserController {
     public void delById(@PathVariable Long id) {
         log.info("UserController - delById(). Удален пользователь с id {}", id);
         userService.delById(id);
-     }
+    }
 }

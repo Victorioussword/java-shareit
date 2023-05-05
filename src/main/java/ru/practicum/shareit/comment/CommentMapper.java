@@ -22,6 +22,7 @@ public class CommentMapper {
                 comment.getAuthor().getName(),
                 comment.getCreated());
     }
+
     public static CommentDtoOutput toCommentDtoOutput(Comment comment) {
         return new CommentDtoOutput(comment.getId(),
                 comment.getText(),
@@ -29,5 +30,4 @@ public class CommentMapper {
                 comment.getAuthor().getName(),
                 comment.getCreated());
     }
-
 }

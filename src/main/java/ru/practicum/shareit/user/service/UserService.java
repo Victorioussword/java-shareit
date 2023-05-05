@@ -2,6 +2,8 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -50,7 +52,7 @@ public class UserService {
         });
         userDto.setId(id);
         prepareUserForUpdate(user, userDto);
-        log.info("UserService - update(). Обновлен {}", user.toString()); // todo 11
+        log.info("UserService - update(). Обновлен {}", user.toString());
         return UserMapper.toUserDto(user);
     }
 
@@ -62,8 +64,10 @@ public class UserService {
     }
 
 
-    public List<UserDto> getAll() {
-        List<User> users = userRepository.findAll();
+    public List<UserDto> getAll(int from, int size) {
+
+        Page<User> usersPage = userRepository.findAll(PageRequest.of(from, size));
+        List<User> users = usersPage.toList();
         List<UserDto> userDtos = users.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
         log.info("UserController - getAll(). Возвращен список из {} пользователей", userDtos.size());
         return userDtos;

@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +17,11 @@ import ru.practicum.shareit.exception.AvailableCheckException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.Request;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -38,16 +42,23 @@ public class ItemService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-
+    private final RequestRepository requestRepository;
     Sort sort = Sort.by(Sort.Direction.DESC, "id");
 
     @Transactional
     public ItemDto createItem(ItemDto itemDto, long userId) {
+
         User owner = userRepository.findById(userId).orElseThrow(() -> {
             throw new NotFoundException("Владелец вещи не найден");
         });
+        Request request = null;
+        if (itemDto.getRequestId() != null) {
+            request = requestRepository.findById(itemDto.getRequestId()).orElseThrow(() ->
+                    new NotFoundException("Request не найден"));
+        }
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner.getId());
+        item.setRequest(request);
         ItemDto itemDtoForReturn = ItemMapper.toItemDto(itemRepository.save(item));
         log.info("ItemService - метод createItem (). Добавлен Item {}.", itemDtoForReturn.toString());
         return itemDtoForReturn;
@@ -55,16 +66,16 @@ public class ItemService {
 
     @Transactional
     public ItemDto update(ItemDto itemDto, long itemId, Long userIdInHeader) {
-        Item item = itemRepository.getById(itemId);  // получаем из базы
+        Item item = itemRepository.getById(itemId);
         checkEqualsUsersIds(item.getOwner(), userIdInHeader);
-
         prepareItemForUpdate(item, itemDto);
         log.info("ItemService - update(). Обновлен {}", item.toString());
         return ItemMapper.toItemDto(item);
     }
 
-    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId) {
-        List<Item> items = itemRepository.findAllByOwnerOrderByIdAsc(ownerId);
+    public List<ItemWithBookingAndCommentsDto> getAllByUserId(long ownerId, int from, int size) {
+        Page<Item> itemsPage = itemRepository.findAllByOwnerOrderByIdAsc(ownerId, PageRequest.of(from, size));
+        List<Item> items = itemsPage.toList();
         return addBookingsAndCommentsToList(items);
     }
 
@@ -78,12 +89,14 @@ public class ItemService {
         return addComments(item);
     }
 
-    public List<ItemDto> search(String text) {
-        List<Item> items = itemRepository.search(text);
-        List<ItemDto> itemsDto = items.stream().map(ItemMapper::toItemDto).collect(toList());
-        log.info("ItemController - search(). Возвращен список из {} предметов", items.size());
+    public List<ItemDto> search(String text, int from, int size) {
+        Page<Item> items = itemRepository.search(text, PageRequest.of(from, size));
+        List<Item> itemList = items.toList();
+        List<ItemDto> itemsDto = itemList.stream().map(ItemMapper::toItemDto).collect(toList());
+        log.info("ItemController - search(). Возвращен список из {} предметов", itemList.size());
         return itemsDto;
     }
+
 
     @Transactional
     public CommentDtoOutput createComment(CommentDtoInput commentDto, Long userId, Long itemId) {

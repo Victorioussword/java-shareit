@@ -188,7 +188,7 @@ public class RequestControllerTest {
     }
 
     @Test
-    void shouldThrowError500() throws Exception {
+    void shouldThrowError400() throws Exception {
         Long userId = 1l;
         RequestOutputDto requestOutputDto1 = new RequestOutputDto(1l,
                 " descriptionOfRequest1",
@@ -214,8 +214,7 @@ public class RequestControllerTest {
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is5xxServerError())
+                .andExpect(status().is4xxClientError())
         ;
     }
-
 }

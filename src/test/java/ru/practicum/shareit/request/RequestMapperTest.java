@@ -31,10 +31,6 @@ public class RequestMapperTest {
         RequestInputDto requestInputDto = new RequestInputDto(
                 " descriptionOfRequest1");
         Request request = RequestMapper.toRequest(requestInputDto, 1L);
-
-//        assertEquals(request.getId(), requestInputDto.getId());
-        assertEquals(request.getDescription(), requestInputDto.getDescription());
-//        assertEquals(request.getDescription(), requestInputDto.getDescription());
-//        assertEquals(request.getCreated(), requestInputDto.getCreated());
+                assertEquals(request.getDescription(), requestInputDto.getDescription());
     }
 }

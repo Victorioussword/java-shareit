@@ -70,33 +70,6 @@ public class RequestService {
 
         return prepareRequests(requests);
 
-//        Map<Request, List<Item>> requestListMap = itemRepository.findByRequestIn(requests, sort)
-//                .stream()
-//                .collect(groupingBy(Item::getRequest, toList()));
-
-//        List<RequestOutputDto> requestOutputDtoList = requests
-//                .stream()
-//                .map(RequestMapper::toRequestOutputDto)
-//                .sorted(Comparator.comparing(RequestOutputDto::getCreated))
-//                .collect(Collectors.toList());
-
-//        List<RequestOutputDto> requestOutputDtoList2 = requestRepository.findAllWithoutUserId(userId, PageRequest.of(from, size))
-//                .stream()
-//                .map(RequestMapper::toRequestOutputDto)
-//                .sorted(Comparator.comparing(RequestOutputDto::getCreated))
-//                .collect(Collectors.toList());
-
-//        for (int i = 0; i < requests.size(); i++) {
-
-//            List<ItemShortForRequest> itemShortForRequests = requestListMap.get(requests.get(i))
-//                    .stream()
-//                    .map(ItemMapper::toItemShortForRequest)
-//                    .collect(Collectors.toList());
-
-//            requestOutputDtoList.get(i).setItems(itemShortForRequests);
-//        }
-
-//        return requestOutputDtoList;
     }
 
 

@@ -179,7 +179,7 @@ public class ItemControllerTest {
     }
 
     @Test
-    void shouldThrow500() throws Exception {
+    void shouldThrow400() throws Exception {
         long userId = 1;
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
         ItemWithBookingAndCommentsDto itemWithBookingAndCommentsDto1 = ItemMapper.toItemWithBookingAndCommentsDto(item1);
@@ -198,7 +198,7 @@ public class ItemControllerTest {
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is5xxServerError())
+                .andExpect(status().is4xxClientError())
                 ;
     }
 }

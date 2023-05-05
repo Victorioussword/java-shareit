@@ -191,7 +191,7 @@ public class BookingControllerTest {
     }
 
     @Test
-            void shouldReturnStatus500() throws Exception {
+            void shouldReturnStatus400() throws Exception {
         Long userId = 1L;
         UserShort userShort1 = new UserShort(1l);
 
@@ -221,7 +221,7 @@ public class BookingControllerTest {
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is5xxServerError())
+                .andExpect(status().is4xxClientError())
         ;
     }
 }

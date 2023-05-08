@@ -2,7 +2,7 @@ version: '3.8'
 services:
   gateway:
     build:./gateway
-    image: gateway_image
+    image: gateway-image
     container_name: gateway_container
     ports:
       - "8080:8080"
@@ -13,7 +13,7 @@ services:
 
   server:
     build: ./server
-    image: server_image
+    image: shateit-server
     container_name: server_container
     ports:
       - "9090:9090"

@@ -78,7 +78,7 @@ public class ItemServiceTest {
         when(itemRepository.findAllByOwnerOrderByIdAsc(anyLong(), any())).thenReturn(new PageImpl<Item>(Collections.singletonList(item1)));
 
 
-        itemService.getAllByUserId(1l, 0, 1);
+        itemService.getAllByUserId(1L, 0, 1);
         verify(itemRepository).findAllByOwnerOrderByIdAsc(anyLong(), any());
         verify(commentRepository).findByItemIn(any(), any());
         verify(bookingRepository).findFirstByItemInAndAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(any(), any(), any());
@@ -125,7 +125,7 @@ public class ItemServiceTest {
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
         User user1 = new User(1L, "userName", "user@mail.ru");
         Booking bookingLast = new Booking(1L, LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(1), item1, user1, Status.APPROVED);
-        Comment comment1 = new Comment(1l, "text comment1", user1, item1, LocalDateTime.now());
+        Comment comment1 = new Comment(1L, "text comment1", user1, item1, LocalDateTime.now());
         CommentDtoInput commentDto1 = CommentMapper.toCommentDtoInput(comment1);
         CommentDtoOutput commentDtoOutput = CommentMapper.toCommentDtoOutput(comment1);
 

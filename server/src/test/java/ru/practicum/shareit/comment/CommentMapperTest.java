@@ -14,7 +14,7 @@ public class CommentMapperTest {
     void toCommentTest() {
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
         User user1 = new User(1L, "userName", "user@mail.ru");
-        CommentDtoInput commentDtoInput1 = new CommentDtoInput(1l,
+        CommentDtoInput commentDtoInput1 = new CommentDtoInput(1L,
                 "text comment1",
                 user1.getId(),
                 user1.getName(),
@@ -34,7 +34,7 @@ public class CommentMapperTest {
     void toCommentDtoInput() {
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
         User user1 = new User(1L, "userName", "user@mail.ru");
-        Comment comment1 = new Comment(1l, "text comment1", user1, item1, LocalDateTime.now());
+        Comment comment1 = new Comment(1L, "text comment1", user1, item1, LocalDateTime.now());
 
     CommentDtoInput commentDtoInput1 = CommentMapper.toCommentDtoInput(comment1);
 
@@ -49,7 +49,7 @@ public class CommentMapperTest {
     void toCommentDtoOutput() {
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
         User user1 = new User(1L, "userName", "user@mail.ru");
-        Comment comment1 = new Comment(1l, "text comment1", user1, item1, LocalDateTime.now());
+        Comment comment1 = new Comment(1L, "text comment1", user1, item1, LocalDateTime.now());
 
         CommentDtoOutput commentDtoOutput1 = CommentMapper.toCommentDtoOutput(comment1);
 
@@ -58,8 +58,5 @@ public class CommentMapperTest {
         assertEquals(comment1.getAuthor().getId(),commentDtoOutput1.getAuthorId());
         assertEquals(comment1.getAuthor().getName(), commentDtoOutput1.getAuthorName());
         assertEquals(comment1.getCreated(), commentDtoOutput1.getCreated());
-
     }
-
-
 }

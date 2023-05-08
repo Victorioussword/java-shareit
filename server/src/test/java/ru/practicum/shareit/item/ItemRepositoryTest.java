@@ -40,14 +40,13 @@ public class ItemRepositoryTest {
 
     User user1 = new User(null, "userName1", "user1@user.com");
     User user2 = new User(null, "userName2", "user2@user.com");
-    Request request1 = new Request(1L, " descriptionOfRequest1", 2l, LocalDateTime.now());
+    Request request1 = new Request(1L, " descriptionOfRequest1", 2L, LocalDateTime.now());
     Item item1 = new Item(null, "item1", "description Item1", true, 1L, request1);
     Item item2 = new Item(null, "item2", "description Item2", true, 1L, request1);
 
 
     @BeforeEach
-    void beforeEach(){
-
+    void beforeEach() {
         userRepository.save(user1);
         userRepository.save(user2);
         requestRepository.save(request1);
@@ -64,8 +63,8 @@ public class ItemRepositoryTest {
     @Test
     void shouldSearch() {
         PageRequest pageRequest = PageRequest.of(0, 2);
-        Page<Item> itemsAfter = itemRepository.search("item" , pageRequest);
-        List<Item> itemList =  itemsAfter.toList();
+        Page<Item> itemsAfter = itemRepository.search("item", pageRequest);
+        List<Item> itemList = itemsAfter.toList();
         assertEquals(2, itemList.size());
         assertEquals(1, itemList.get(0).getId());
         assertEquals(2, itemList.get(1).getId());

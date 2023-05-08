@@ -49,12 +49,12 @@ public class UserServiceTest {
     @Test
     void shouldThrowNotFoundException() { // getById()
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> userService.getById(1l)).isInstanceOf(NotFoundException.class);
+        assertThatThrownBy(() -> userService.getById(1L)).isInstanceOf(NotFoundException.class);
     }
 
     @Test
     void shouldCreateUser() {
-        User user1 = new User(1l, "userName", "user@mail.ru");
+        User user1 = new User(1L, "userName", "user@mail.ru");
         when(userRepository.save(any())).thenReturn(user1);
         UserDto userAfterSave = userService.createUser(UserMapper.toUserDto(user1));
         assertThat(userAfterSave.getId()).isEqualTo(user1.getId());
@@ -75,9 +75,9 @@ public class UserServiceTest {
 
         UserDto userDto1 = UserMapper.toUserDto(user1);
 
-        when(userRepository.findById(1l)).thenReturn(us);
+        when(userRepository.findById(1L)).thenReturn(us);
 
-        UserDto userDtoAfter = userService.update(userDto1, 1l);
+        UserDto userDtoAfter = userService.update(userDto1, 1L);
 
         assertThat(userDtoAfter.getId()).isEqualTo(user1.getId());
         assertThat(userDtoAfter.getName()).isEqualTo(user1.getName());

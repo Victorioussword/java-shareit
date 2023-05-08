@@ -60,8 +60,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     "order by  b.start_time DESC ",
             countQuery = "select count(*) from bookings  as b , items as i , users as u  " +
                     " where b.item_id=i.id and i.owner_id=u.id and u.id = ?1 " +
-                    "group by  b.start_time "+
-                    "order by  b.start_time DESC " )
+                    "group by  b.start_time " +
+                    "order by  b.start_time DESC ")
     Page<Booking> findAllByOwnerOrderByStartDesc(long ownerId, Pageable pageable);
 
 

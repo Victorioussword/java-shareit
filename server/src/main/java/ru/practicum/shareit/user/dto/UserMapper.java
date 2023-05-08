@@ -19,7 +19,7 @@ public class UserMapper {
                 userDto.getEmail());
     }
 
-    public static UserShort toUserShort (User user){
+    public static UserShort toUserShort(User user) {
         return new UserShort(user.getId());
     }
 }

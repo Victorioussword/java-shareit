@@ -66,7 +66,8 @@ public class RequestService {
 
     public List<RequestOutputDto> getAllRequests(Long userId, Integer from, Integer size) {
 
-        List<Request> requests = requestRepository.findRequestsByRequesterNotOrderByCreatedDesc (userId, PageRequest.of(from, size)).toList();
+        List<Request> requests = requestRepository
+                .findRequestsByRequesterNotOrderByCreatedDesc(userId, PageRequest.of(from, size)).toList();
 
         return prepareRequests(requests);
 

@@ -67,7 +67,7 @@ public class RequestRepositoryTest {
     void shouldFindAllWithoutUserId() {
 
         PageRequest pageRequest = PageRequest.of(0, 1);
-        Page<Request> requestsAfter = requestRepository.findAllWithoutUserId(2l, pageRequest);
+        Page<Request> requestsAfter = requestRepository.findAllWithoutUserId(2L, pageRequest);
         List<Request> requestList = requestsAfter.toList();
         assertEquals(1, requestList.size());
         assertEquals(" descriptionOfRequest2", requestList.get(0).getDescription());

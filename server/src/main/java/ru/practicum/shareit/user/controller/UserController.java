@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.Create;
 import ru.practicum.shareit.user.dto.Update;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @Slf4j
@@ -43,15 +44,13 @@ public class UserController {
         return userDtoForReturn;
     }
 
-
     @GetMapping
-    public List<UserDto> getAll(@RequestParam(name = "from") Integer from,
-                                @RequestParam(name = "size") Integer size) {
+    public List<UserDto> getAll(@RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
+                                @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(100) Integer size) {
         List<UserDto> userDtos = userService.getAll(from, size);
         log.info("UserController - getAll(). Возвращен список из {} пользователей", userDtos.size());
         return userDtos;
     }
-
 
     @DeleteMapping("/{id}")
     public void delById(@PathVariable Long id) {

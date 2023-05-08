@@ -30,7 +30,7 @@ public class ItemMapperTest {
     @Test
     void toItemTest() {
 
-        ItemDto itemDto1 = new ItemDto(1L, "item1", "description Item1", true, 1l);
+        ItemDto itemDto1 = new ItemDto(1L, "item1", "description Item1", true, 1L);
         Item item1 = ItemMapper.toItem(itemDto1);
         assertEquals(item1.getId(), itemDto1.getId());
         assertEquals(item1.getName(), itemDto1.getName());
@@ -55,13 +55,13 @@ public class ItemMapperTest {
     void toItemShortForRequest() {
 
         Item item1 = new Item(1L, "item1", "description Item1", true, 1L, null);
-        Request request1 = new Request(1l, "description1", 1L, LocalDateTime.now());
+        Request request1 = new Request(1L, "description1", 1L, LocalDateTime.now());
         item1.setRequest(request1);
         ItemShortForRequest itemShortForRequest1 = ItemMapper.toItemShortForRequest(item1);
         assertEquals(item1.getId(), itemShortForRequest1.getId());
         assertEquals(item1.getName(), itemShortForRequest1.getName());
         assertEquals(item1.getDescription(), itemShortForRequest1.getDescription());
         assertEquals(item1.getAvailable(), itemShortForRequest1.getAvailable());
-        assertEquals( request1.getId(), itemShortForRequest1.getRequestId());
+        assertEquals(request1.getId(), itemShortForRequest1.getRequestId());
     }
 }

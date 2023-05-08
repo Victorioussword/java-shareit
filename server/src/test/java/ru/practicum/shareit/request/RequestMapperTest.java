@@ -14,9 +14,9 @@ public class RequestMapperTest {
 
     @Test
     void toRequestOutputDtoTest() {
-        Request request = new Request(1l,
+        Request request = new Request(1L,
                 " descriptionOfRequest1",
-                1l,
+                1L,
                 LocalDateTime.now());
         RequestOutputDto requestOutputDto = RequestMapper.toRequestOutputDto(request);
 

@@ -11,8 +11,6 @@ import ru.practicum.shareit.item.model.ItemWithBookingAndCommentsDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.Create;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.Collections;
 import java.util.List;
 

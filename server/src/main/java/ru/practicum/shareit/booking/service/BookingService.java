@@ -49,8 +49,10 @@ public class BookingService {
         if (item.isEmpty()) {
             throw new NotFoundException("Item не обнаружен в базе данных");
         }
+        long bookerUser = booker.get().getId();
+        long ownerItem = item.get().getOwner();
 
-        if (booker.get().getId() == item.get().getOwner()) {
+        if (bookerUser == ownerItem) {
             throw new NotFoundException("Владелец не может бронировать свою вещь");
         }
         checkAvailable(item.get());
@@ -129,28 +131,28 @@ public class BookingService {
         }
         switch (state) {
             case ALL:
-                return bookingRepository.findAllByBookerOrderByStartDesc(userId, PageRequest.of(from / size, size)).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByBookerOrderByStartDesc(userId, PageRequest.of(from / size, size))
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case FUTURE:
-                return bookingRepository.findAllByBookerOrderByStartDescFuture(userId, LocalDateTime.now(), sort).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByBookerOrderByStartDescFuture(userId, LocalDateTime.now(), sort)
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case WAITING:
-                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.WAITING).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.WAITING)
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case REJECTED:
-                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.REJECTED).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByBookerOrderByStartDescStatus(userId, Status.REJECTED)
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case CURRENT:
-                return bookingRepository.findAllByBookerOrderByStartDescCurrent(userId, LocalDateTime.now()).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByBookerOrderByStartDescCurrent(userId, LocalDateTime.now())
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case PAST:
-                return bookingRepository.findAllByBookerPast(userId, LocalDateTime.now()).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByBookerPast(userId, LocalDateTime.now())
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
             default:
                 throw new UnknownStatusException("Unknown state: " + "UNSUPPORTED_STATUS");
         }
@@ -162,28 +164,28 @@ public class BookingService {
         }
         switch (state) {
             case ALL:
-                return bookingRepository.findAllByOwnerOrderByStartDesc(ownerId, PageRequest.of(from, size)).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByOwnerOrderByStartDesc(ownerId, PageRequest.of(from, size))
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case FUTURE:
-                return bookingRepository.findAllByOwnerOrderByStartDescFuture(ownerId, LocalDateTime.now()).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByOwnerOrderByStartDescFuture(ownerId, LocalDateTime.now())
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case WAITING:
-                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.WAITING).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.WAITING)
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case REJECTED:
-                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.REJECTED).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByOwnerOrderByStartDescStatus(ownerId, Status.REJECTED)
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case CURRENT:
-                return bookingRepository.findAllByOwnerOrderByStartDescCurrent(ownerId, LocalDateTime.now()).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByOwnerOrderByStartDescCurrent(ownerId, LocalDateTime.now())
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
 
             case PAST:
-                return bookingRepository.findAllByOwnerPast(ownerId, LocalDateTime.now()).
-                        stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
+                return bookingRepository.findAllByOwnerPast(ownerId, LocalDateTime.now())
+                        .stream().map(BookingMapper::toBookingDtoForReturn).collect(Collectors.toList());
             default:
                 throw new UnknownStatusException("Unknown state: " + "UNSUPPORTED_STATUS");
         }

@@ -11,7 +11,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findAllByItemId(long id);
 
-    List<Comment> findByItemIn(List <Item> items, Sort sort);
+    List<Comment> findByItemIn(List<Item> items, Sort sort);
 
 
 }

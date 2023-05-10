@@ -39,7 +39,7 @@ public class BookingClient extends BaseClient {
 
 
     public ResponseEntity<Object> bookItem(long userId, BookItemRequestDto requestDto) {
-        return post("", userId, requestDto);
+        return post("/", userId, requestDto);
     }
 
 

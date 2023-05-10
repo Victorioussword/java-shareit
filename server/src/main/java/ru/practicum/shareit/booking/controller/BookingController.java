@@ -22,11 +22,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
 @Validated
+/**
+ * SERVER
+ */
 public class BookingController {
     private final BookingService bookingService;
 
-    //+
-    @PostMapping
+    @PostMapping//+
     public BookingDtoForReturn postBooking(@RequestHeader("X-Sharer-User-Id") long bookerId,
                                            @Validated(Create.class) @RequestBody BookingDto bookingDto) {
         bookingDto.setBooker(bookerId);
@@ -34,7 +36,7 @@ public class BookingController {
         return bookingService.postBooking(bookingDto);
     }
 
-    @PatchMapping("/{bookingId}")
+    @PatchMapping("/{bookingId}") //+
     public BookingDtoForReturn approving(@RequestHeader("X-Sharer-User-Id") long userId,
                                          @PathVariable long bookingId,
                                          @RequestParam boolean approved) {
@@ -42,7 +44,7 @@ public class BookingController {
         return bookingService.approving(bookingId, userId, approved);
     }
 
-    @GetMapping("/{bookingId}")
+    @GetMapping("/{bookingId}") //+
     public BookingDtoForReturn getById(@PathVariable long bookingId,
                                        @RequestHeader("X-Sharer-User-Id") long userId) {
         BookingDtoForReturn bookingDtoForReturn = bookingService.getById(bookingId, userId);
@@ -50,7 +52,7 @@ public class BookingController {
         return bookingDtoForReturn;
     }
 
-    @GetMapping("/owner")
+    @GetMapping("/owner") //+
     public List<BookingDtoForReturn> getByOwnerId(@RequestHeader("X-Sharer-User-Id") long userId,
                                                   @RequestParam(defaultValue = "ALL") String state,
                                                   @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
@@ -61,7 +63,7 @@ public class BookingController {
         return bookingDtos;
     }
 
-    @GetMapping
+    @GetMapping //+
     public List<BookingDtoForReturn> getByBookerId(@RequestHeader("X-Sharer-User-Id") long userId,
                                                    @RequestParam(defaultValue = "ALL") String state,
                                                    @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Integer from,

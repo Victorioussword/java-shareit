@@ -83,9 +83,11 @@ public class ItemService {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item не найден "));
         if (item.getOwner() == userId) {
-            log.info("ItemService - getById(). Возвращен {}", item.toString());
-            return addBookingsAndComment(item);
+            log.info("ItemService - getById(). Возвращен {} --- Добавлены Bookings и Comments", item.toString());
+            List<Item> items = List.of(item);
+            return addBookingsAndCommentsToList(items).get(0);
         }
+        log.info("ItemService - getById(). Возвращен {} --- Добавлены только Comments", item.toString());
         return addComments(item);
     }
 
@@ -155,12 +157,12 @@ public class ItemService {
                 .findFirstByItemAndStatusLikeAndStartLessThanEqualOrderByStartDesc(item, Status.APPROVED, LocalDateTime.now());
 
         // добавляем в Item прошлый и следующий букинги
-        if (next.isPresent()) {
+        if (next.isPresent()) {  // должно быть  4 - 5
             BookingShortDto bookingShortDtoNext = BookingMapper.toBookingShortDto(next.get());
             itemWithBookingAndCommentsDto.setNextBooking(bookingShortDtoNext);
         }
 
-        if (last.isPresent()) {
+        if (last.isPresent()) {   // null
             BookingShortDto bookingShortDtoLast =
                     BookingMapper.toBookingShortDto(last.get());
             itemWithBookingAndCommentsDto.setLastBooking(bookingShortDtoLast);
@@ -179,10 +181,10 @@ public class ItemService {
 
         Map<Item, List<Comment>> comments = commentRepository.findByItemIn(items, sort).stream().collect(groupingBy(Comment::getItem, toList()));
 
-        Map<Item, Booking> lasts = bookingRepository.findFirstByItemInAndAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(items, LocalDateTime.now(), Status.APPROVED)
+        Map<Item, Booking> lasts = bookingRepository.findFirstByItemInAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(items, LocalDateTime.now(), Status.APPROVED)
                 .stream().collect(toMap(Booking::getItem, identity()));
 
-        Map<Item, Booking> nexts = bookingRepository.findFirstByItemInAndAndStartAfterAndStatusEqualsOrderByStartAsc(items, LocalDateTime.now(), Status.APPROVED)
+        Map<Item, Booking> nexts = bookingRepository.findFirstByItemInAndStartAfterAndStatusEqualsOrderByStartAsc(items, LocalDateTime.now(), Status.APPROVED)
                 .stream().collect(toMap(Booking::getItem, identity()));
 
         for (int i = 0; i < items.size(); i++) {

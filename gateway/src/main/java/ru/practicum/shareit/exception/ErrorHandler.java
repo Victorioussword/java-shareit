@@ -29,12 +29,12 @@ public class ErrorHandler {
         return Map.of("409 {}", e.toString());
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> throwableHandler(final Throwable e) {
-        log.warn("500 {}", e);
-        return Map.of("500 {}", e.toString());
-    }
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public Map<String, String> throwableHandler(final Throwable e) {
+//        log.warn("500 {}", e);
+//        return Map.of("500 {}", e.toString());
+//    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -51,10 +51,10 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> notExistInDataBaseHandler(final NotExistInDataBase e) {
-        log.warn("404{}", e);
-        return Map.of("404 {}", e.toString());
+        log.warn("500 {}", e);
+        return Map.of("500 {}", e.toString());
     }
 
     @ExceptionHandler
@@ -69,13 +69,15 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> methodXXX(final MethodArgumentNotValidException e) {
         log.warn("400 {}", e);
-        return Map.of("400 {}", e.toString());
+        return Map.of("400 {}", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> methodXXX(final ConstraintViolationException e) {
-        log.warn("400 {}", e);
-        return Map.of("400 {}", e.toString());
+    public Map<String, String> methodYYY(final ConstraintViolationException e) {
+        log.warn("400 {}", e.getMessage());
+        return Map.of("!!!!____400 {} ConstraintViolationException", e.getMessage());
     }
 }
+
+///UnexpectedTypeException

@@ -105,13 +105,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // прошлый и следующий
 
-    // last
-    List<Booking> findFirstByItemInAndAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(List<Item> items,
+    // last - этот
+    List<Booking> findFirstByItemInAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(List<Item> items,
                                                                                            LocalDateTime now,
                                                                                            Status status);
 
     // next
-    List<Booking> findFirstByItemInAndAndStartAfterAndStatusEqualsOrderByStartAsc(List<Item> items,
+    List<Booking> findFirstByItemInAndStartAfterAndStatusEqualsOrderByStartAsc(List<Item> items,
                                                                                   LocalDateTime now,
                                                                                   Status status);
 

@@ -107,21 +107,25 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // last - этот
     List<Booking> findFirstByItemInAndStartLessThanEqualAndStatusEqualsOrderByStartDesc(List<Item> items,
-                                                                                           LocalDateTime now,
-                                                                                           Status status);
+                                                                                        LocalDateTime now,
+                                                                                        Status status);
 
-    // next
+    // next - этот
     List<Booking> findFirstByItemInAndStartAfterAndStatusEqualsOrderByStartAsc(List<Item> items,
-                                                                                  LocalDateTime now,
-                                                                                  Status status);
+                                                                               LocalDateTime now,
+                                                                               Status status);
 
-    // next
+    // next - не используется
     Optional<Booking> findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(Item item,
                                                                                Status status,
                                                                                LocalDateTime start);
 
-    // last
+    // last - не используется
     Optional<Booking> findFirstByItemAndStatusLikeAndStartLessThanEqualOrderByStartDesc(Item item,
                                                                                         Status status,
                                                                                         LocalDateTime start);
+
+    Optional<Booking> findFirstByItemAndStatusLikeAndStartLessThanOrderByStartDesc(Item item,
+                                                                                   Status status,
+                                                                                   LocalDateTime start);
 }

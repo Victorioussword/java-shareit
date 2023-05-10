@@ -79,17 +79,23 @@ public class ItemService {
         return addBookingsAndCommentsToList(items);
     }
 
+
     public ItemWithBookingAndCommentsDto getById(long id, long userId) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item не найден "));
         if (item.getOwner() == userId) {
             log.info("ItemService - getById(). Возвращен {} --- Добавлены Bookings и Comments", item.toString());
-            List<Item> items = List.of(item);
-            return addBookingsAndCommentsToList(items).get(0);
+
+            return addBookingsAndComment(item);
         }
         log.info("ItemService - getById(). Возвращен {} --- Добавлены только Comments", item.toString());
         return addComments(item);
     }
+
+
+
+
+
 
     public List<ItemDto> search(String text, int from, int size) {
         Page<Item> items = itemRepository.search(text, PageRequest.of(from, size));
@@ -154,7 +160,7 @@ public class ItemService {
         Optional<Booking> next = bookingRepository
                 .findFirstByItemAndStatusLikeAndStartAfterOrderByStartAsc(item, Status.APPROVED, LocalDateTime.now());
         Optional<Booking> last = bookingRepository
-                .findFirstByItemAndStatusLikeAndStartLessThanEqualOrderByStartDesc(item, Status.APPROVED, LocalDateTime.now());
+                .findFirstByItemAndStatusLikeAndStartLessThanOrderByStartDesc(item, Status.APPROVED, LocalDateTime.now());
 
         // добавляем в Item прошлый и следующий букинги
         if (next.isPresent()) {  // должно быть  4 - 5

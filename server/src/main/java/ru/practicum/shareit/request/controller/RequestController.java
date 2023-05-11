@@ -1,0 +1,58 @@
+package ru.practicum.shareit.request.controller;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.request.dto.RequestInputDto;
+import ru.practicum.shareit.request.dto.RequestOutputDto;
+import ru.practicum.shareit.request.service.RequestService;
+import ru.practicum.shareit.user.dto.Create;
+
+import java.util.List;
+
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(path = "/requests")
+@Validated
+public class RequestController {
+
+    private final RequestService requestService;
+
+
+    //  1. POST /requests — добавить новый запрос вещи.
+    @PostMapping
+    public RequestOutputDto createRequest(@Validated(Create.class) @RequestBody RequestInputDto requestInputDto,
+                                          @RequestHeader("X-Sharer-User-Id") long userId) {
+
+        log.info(" RequestController -  createRequest(). Создан {}", requestInputDto.toString());
+        return requestService.createRequest(requestInputDto, userId);
+    }
+
+    // 2.  GET /requests — получить список своих запросов вместе с данными об ответах на них.
+    @GetMapping
+    public List<RequestOutputDto> getRequestsByAuthor(@RequestHeader("X-Sharer-User-Id") long userId) {
+
+        List<RequestOutputDto> requestOutputDtos = requestService.getRequestsByAuthor(userId);
+        log.info(" RequestController -  getRequestsByAuthor(). Возвращен список из {} запросов", requestOutputDtos.size());
+        return requestOutputDtos;
+    }
+
+    // 3.  GET /requests/all?from={from}&size={size} — получить список запросов,
+    @GetMapping("/all")
+    public List<RequestOutputDto> getAllRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                 @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                 @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        return requestService.getAllRequests(userId, from, size);
+    }
+
+    // 4. GET /requests/{requestId} — получить данные об одном конкретном запросе
+    @GetMapping("/{requestId}")
+    public RequestOutputDto getRequestById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                           @PathVariable(name = "requestId") Long requestId) {
+        RequestOutputDto requestOutputDto = requestService.getRequestById(requestId, userId);
+        log.info(" RequestController -  getRequestById(). Возвращен {}", requestOutputDto.toString());
+        return requestOutputDto;
+    }
+}

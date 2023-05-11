@@ -9,10 +9,12 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.validation.StartBeforeEnd;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@StartBeforeEnd
 public class BookItemRequestDto {
 
 	private long itemId;

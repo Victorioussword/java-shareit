@@ -2,21 +2,16 @@ package ru.practicum.shareit.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.Update;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
-@Validated
 public class UserController {
 
     private final UserService userService;
@@ -30,7 +25,7 @@ public class UserController {
 
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable long id, @Validated(Update.class) @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable long id,  @RequestBody UserDto userDto) {
         userDto.setId(id);
         log.info("UserController - update(). Обновлен {}", userDto.toString());
         return userService.update(userDto, id);
@@ -45,8 +40,8 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getAll(@RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
-                                @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(100) Integer size) {
+    public List<UserDto> getAll(@RequestParam(name = "from", defaultValue = "0") Integer from,
+                                @RequestParam(name = "size", defaultValue = "10") Integer size) {
         List<UserDto> userDtos = userService.getAll(from, size);
         log.info("UserController - getAll(). Возвращен список из {} пользователей", userDtos.size());
         return userDtos;

@@ -29,12 +29,12 @@ public class ErrorHandler {
         return Map.of("409 {}", e.toString());
     }
 
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public Map<String, String> throwableHandler(final Throwable e) {
-//        log.warn("500 {}", e);
-//        return Map.of("500 {}", e.toString());
-//    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> throwableHandler(final Throwable e) {
+        log.warn("500 {}", e);
+        return Map.of("500 {}", e.toString());
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

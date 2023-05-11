@@ -9,8 +9,6 @@ import ru.practicum.shareit.request.dto.RequestOutputDto;
 import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.user.dto.Create;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @Slf4j
@@ -44,8 +42,8 @@ public class RequestController {
     // 3.  GET /requests/all?from={from}&size={size} — получить список запросов,
     @GetMapping("/all")
     public List<RequestOutputDto> getAllRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                 @RequestParam(name = "from", defaultValue = "0") @Min(0) Integer from,
-                                                 @RequestParam(name = "size", defaultValue = "10") @Min(1) @Max(100) Integer size) {
+                                                 @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                 @RequestParam(name = "size", defaultValue = "10") Integer size) {
         return requestService.getAllRequests(userId, from, size);
     }
 
